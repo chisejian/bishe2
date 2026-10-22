@@ -8,18 +8,23 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: Ocean
-  m_Shader: {fileID: 4800000, guid: 8c3bb6de0c0e7c047b65c077249507e5, type: 3}
+  m_Shader: {fileID: 4800000, guid: 933532a4fcc9baf4fa0491de14d08ed7, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords: []
+  m_ValidKeywords:
+  - _ALPHAPREMULTIPLY_ON
+  - _SURFACE_TYPE_TRANSPARENT
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
-  m_DoubleSidedGI: 0
-  m_CustomRenderQueue: -1
-  stringTagMap: {}
+  m_DoubleSidedGI: 1
+  m_CustomRenderQueue: 3000
+  stringTagMap:
+    RenderType: Transparent
   disabledShaderPasses:
   - MOTIONVECTORS
+  - SHADOWCASTER
+  - DepthOnly
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
@@ -29,7 +34,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BaseMap:
-        m_Texture: {fileID: 2800000, guid: 4fa92d22aa34f7749bccc30fc7810907, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _BumpMap:
@@ -69,7 +74,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MainTex:
-        m_Texture: {fileID: 2800000, guid: 4fa92d22aa34f7749bccc30fc7810907, type: 3}
+        m_Texture: {fileID: 0}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _MetallicGlossMap:
@@ -150,7 +155,7 @@ Material:
     - _ClearCoatMask: 0
     - _ClearCoatSmoothness: 0
     - _CousticOffset: 0
-    - _Cull: 2
+    - _Cull: 0
     - _Cutoff: 0.5
     - _Depth: 1.1
     - _DetailAlbedoMapScale: 1
@@ -161,8 +166,8 @@ Material:
     - _DistanceMin: 0
     - _DistortionPower1: 0.82
     - _DistortionSpeed1: 0.66
-    - _DstBlend: 0
-    - _DstBlendAlpha: 0
+    - _DstBlend: 10
+    - _DstBlendAlpha: 10
     - _EdgeDistance: 0.941
     - _EdgeLength: 50
     - _EdgePower: 1
@@ -201,13 +206,13 @@ Material:
     - _QueueOffset: 0
     - _ReceiveShadows: 1
     - _RefractionPower: 2
-    - _Smoothness: 0.5
+    - _Smoothness: 0.8
     - _SmoothnessPower: 1
     - _SmoothnessTextureChannel: 0
     - _SpecularHighlights: 1
     - _SrcBlend: 1
     - _SrcBlendAlpha: 1
-    - _Surface: 0
+    - _Surface: 1
     - _Tess: 16
     - _TesselationPower: 64
     - _Tiling: 4
@@ -227,14 +232,14 @@ Material:
     - _WavesTiling: 0.5
     - _WorkflowMode: 1
     - _XRMotionVectorsPass: 1
-    - _ZWrite: 1
+    - _ZWrite: 0
     - __dirty: 0
     - _hhdjt: 500
     - _kykyk: 1000
     m_Colors:
-    - _BaseColor: {r: 1, g: 1, b: 1, a: 1}
+    - _BaseColor: {r: 0.052064717, g: 0.34988475, b: 0.735849, a: 0.65}
     - _CausticsColor: {r: 0.29125133, g: 0.5575275, b: 0.7264151, a: 0}
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color: {r: 0.052064694, g: 0.34988472, b: 0.735849, a: 0.65}
     - _Color0: {r: 0, g: 0.5987654, b: 1, a: 0}
     - _Color1: {r: 1, g: 0.76618373, b: 0, a: 1}
     - _DepthColor: {r: 0.05206473, g: 0.3498848, b: 0.735849, a: 1}
@@ -254,10 +259,9 @@ Material:
     - _WavesScale: {r: 1, g: 1, b: 0, a: 0}
     - _WavesScaleOLD: {r: 1, g: 1, b: 0, a: 0}
     - _WavesScaleXY: {r: 0.1, g: 0.1, b: 0, a: 0}
-    - _White: {r: 1, g: 1, b: 1, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1
---- !u!114 &6243622772771171978
+--- !u!114 &1919547471565760155
 MonoBehaviour:
   m_ObjectHideFlags: 11
   m_CorrespondingSourceObject: {fileID: 0}
