@@ -17,7 +17,7 @@ public class PlayerController : MonoBehaviour
 
     public float jumpSpeed = 2.0f;
     
-    private Rigidbody rigidbody;
+    private Rigidbody playerRigidbody;
     
 
     public Vector3 cameraOffset;
@@ -28,7 +28,7 @@ public class PlayerController : MonoBehaviour
         anim = GetComponent<Animator>();
        
         cameraObject = GameObject.FindWithTag("MainCamera");
-        rigidbody = GetComponent<Rigidbody>();
+        playerRigidbody = GetComponent<Rigidbody>();
     }
 
     // Update is called once per frame
@@ -65,7 +65,7 @@ public class PlayerController : MonoBehaviour
 
         if (Input.GetKeyDown(KeyCode.Space))
         {
-            rigidbody.linearVelocity = Vector3.up * jumpSpeed;
+            playerRigidbody.linearVelocity = Vector3.up * jumpSpeed;
             anim.SetTrigger("Jump");
         }
         if (Input.GetKeyDown(KeyCode.Q))
