@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 8665be1c16705ae6b7ccadbce6a33b0b
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures: []
+  nonModifiableTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 299314
+  packageName: 'Pure Nature 2 : Oasis Desert'
+  packageVersion: 
+  assetPath: Assets/BK/Pure_Common/Shaders/BK_Grass.shader
+  uploadId: 0

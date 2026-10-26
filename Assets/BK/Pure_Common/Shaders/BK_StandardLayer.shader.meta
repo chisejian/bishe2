@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 9649d1f91c4d57cf9516e2cf516d9f2c
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures: []
+  nonModifiableTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 299314
+  packageName: 'Pure Nature 2 : Oasis Desert'
+  packageVersion: 
+  assetPath: Assets/BK/Pure_Common/Shaders/BK_StandardLayer.shader
+  uploadId: 0

@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: 4db2c7e293eb5074864233a46884eb7e
+AssetOrigin:
+  serializedVersion: 1
+  productId: 299314
+  packageName: 'Pure Nature 2 : Oasis Desert'
+  packageVersion: 
+  assetPath: Assets/BK/Pure_Common/Shaders/BK_Water.shader
+  uploadId: 0
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures: []
+  nonModifiableTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 

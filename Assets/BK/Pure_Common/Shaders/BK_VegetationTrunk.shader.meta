@@ -1,0 +1,16 @@
+fileFormatVersion: 2
+guid: caa1b7f949505078bd2a8bba1630857c
+ShaderImporter:
+  externalObjects: {}
+  defaultTextures: []
+  nonModifiableTextures: []
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
+AssetOrigin:
+  serializedVersion: 1
+  productId: 299314
+  packageName: 'Pure Nature 2 : Oasis Desert'
+  packageVersion: 
+  assetPath: Assets/BK/Pure_Common/Shaders/BK_VegetationTrunk.shader
+  uploadId: 0
