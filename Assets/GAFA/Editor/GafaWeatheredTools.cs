@@ -70,7 +70,7 @@ public static class GafaWeatheredTools
         (new Color(0.3368f, 0.3140f, 0.2664f), 0.82f, "plaza"),
         (new Color(0.3185f, 0.2918f, 0.2542f), 0.85f, "podium"),
         (new Color(0.2664f, 0.2346f, 0.1812f), 0.92f, "bark"),
-        (new Color(0.1683f, 0.1676f, 0.1439f), 1.00f, "soil"),
+        (new Color(0.0704f, 0.0666f, 0.0296f), 1.00f, "soil"),   // 远处 700×700 m 地面
     };
 
     // ================================================================ 1. 噪声贴图
