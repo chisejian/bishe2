@@ -1,4 +1,4 @@
-﻿#if UNITY_EDITOR
+#if UNITY_EDITOR
 using System;
 using System.Collections.Generic;
 using UnityEditor;
@@ -28,14 +28,48 @@ public class CurvedStoneRoadBuilderV3 : EditorWindow
     [SerializeField] private int seed = 2026;
     [SerializeField] private bool saveMeshAsset = true;
     [SerializeField] private string outputName = "连续石砖道路_GeneratedRoad_V3";
+
+    // 自定义污渍：可使用大鹅粪模型、扁平污渍模型或 Decal Projector 预制体。
+    [SerializeField] private GameObject stainPrefab;
+    [SerializeField, Range(0, 300)] private int stainCount = 20;
+    [SerializeField] private float stainScaleMin = 0.75f, stainScaleMax = 1.25f;
+    [SerializeField] private float stainOffset = 0.015f;
+    [SerializeField] private bool alignStainsToTerrain = false;
+    [SerializeField] private int stainSeed = 90210;
+
     private Vector2 scroll;
     private const int Across = 15; // 15 横向顶点：独立两侧路沿和中央路面，并有破损形变所需细分
+    private const string StainPrefix = "__V3_Stain_";
+
+    [Serializable]
+    private class PersistedSettings
+    {
+        public int version = 1;
+        public string splineId, terrainId;
+        public string topMaterialPath, sideMaterialPath, bottomMaterialPath, damageMaterialPath, curbMaterialPath;
+        public string stainPrefabPath, outputName;
+        public float width, thickness, curbWidth, curbRise, sampleStep, heightOffset, topRepeatLength, sideRepeatLength;
+        public bool conformToTerrain, createCollider, edgeDamage, sideDamage, surfaceDamage, saveMeshAsset, alignStainsToTerrain;
+        public float edgeChance, sideChance, pitChance, edgeDepth, sideDepth, pitDepth, damageScale;
+        public int seed, stainCount, stainSeed;
+        public float stainScaleMin, stainScaleMax, stainOffset;
+    }
+
+    private string SettingsKey =>
+        "CurvedStoneRoadBuilderV3.Settings." +
+        Application.dataPath.Replace('/', '_').Replace('\\', '_').Replace(':', '_');
+
+    private void OnEnable() => LoadSettings();
+    private void OnDisable() => SaveSettings();
 
     [MenuItem("Tools/道路工具/连续曲线石砖路 V3（破损与路沿）")]
     private static void Open() => GetWindow<CurvedStoneRoadBuilderV3>("石砖道路 V3");
 
     private void OnGUI()
     {
+        bool generatePressed = false;
+        bool updateStainsPressed = false;
+        EditorGUI.BeginChangeCheck();
         scroll = EditorGUILayout.BeginScrollView(scroll);
         EditorGUILayout.HelpBox("沿已有 Spline 曲线生成道路。包含真实边缘崩缺、侧壁凹损、浅凹坑、独立石板路沿及破损表面材质。不会修改 Terrain Data。建议先保存场景副本。", MessageType.Info);
         spline = (SplineContainer)EditorGUILayout.ObjectField("道路曲线（Spline）", spline, typeof(SplineContainer), true);
@@ -71,14 +105,159 @@ public class CurvedStoneRoadBuilderV3 : EditorWindow
         if (surfaceDamage) { pitChance = EditorGUILayout.Slider("路面破损概率", pitChance, 0, 1); pitDepth = EditorGUILayout.FloatField("浅坑深度（m）", pitDepth); }
         damageScale = EditorGUILayout.Slider("破损尺寸（Damage Scale）", damageScale, 0.2f, 3f);
         seed = EditorGUILayout.IntField("随机种子（Seed）", seed);
+
+        EditorGUILayout.Space();
+        EditorGUILayout.LabelField("自定义污渍 / 大鹅粪（Custom Stains）", EditorStyles.boldLabel);
+        stainPrefab = (GameObject)EditorGUILayout.ObjectField(
+            "污渍预制体（Prefab）", stainPrefab, typeof(GameObject), false);
+        stainCount = EditorGUILayout.IntSlider("污渍数量", stainCount, 0, 300);
+        stainScaleMin = EditorGUILayout.FloatField("最小缩放（Scale Min）", stainScaleMin);
+        stainScaleMax = EditorGUILayout.FloatField("最大缩放（Scale Max）", stainScaleMax);
+        stainOffset = EditorGUILayout.FloatField("离路面偏移（Offset，m）", stainOffset);
+        alignStainsToTerrain = EditorGUILayout.Toggle("贴合地形法线（适合模型）", alignStainsToTerrain);
+        stainSeed = EditorGUILayout.IntField("污渍随机种子（Stain Seed）", stainSeed);
+        EditorGUILayout.HelpBox(
+            "把大鹅粪模型、扁平污渍模型或已配置好的 Decal Projector 预制体拖到这里。生成时会将污渍随机摆在道路中央区域。调整污渍后可用下方“仅更新污渍”，不用重新生成整条道路网格。",
+            MessageType.Info);
+
         EditorGUILayout.Space();
         saveMeshAsset = EditorGUILayout.Toggle("保存网格 .asset（Save Mesh）", saveMeshAsset);
         outputName = EditorGUILayout.TextField("生成对象名称", outputName);
         bool ok = spline != null && width > 0.2f && thickness > 0.001f && sampleStep > 0.01f && topRepeatLength > 0.001f && sideRepeatLength > 0.001f && curbWidth >= 0 && curbWidth < width * .45f;
         using (new EditorGUI.DisabledScope(!ok))
-            if (GUILayout.Button("生成 / 重新生成道路 V3", GUILayout.Height(38))) Generate();
+            if (GUILayout.Button("生成 / 重新生成道路 V3", GUILayout.Height(38))) generatePressed = true;
+
+        using (new EditorGUI.DisabledScope(spline == null || stainPrefab == null))
+            if (GUILayout.Button("仅更新污渍（不重建道路网格）", GUILayout.Height(32))) updateStainsPressed = true;
+
         EditorGUILayout.HelpBox("限制：此版不会逐块切砖、不会生成真正的贯通破洞；路面浅坑为局部顶点下陷。非常急的弯道仍可能因宽度过大产生自交。路面原图已包含左右边带，建议在 V3 中使用无边带的中央砖纹理，否则可能出现重复路沿。", MessageType.None);
         EditorGUILayout.EndScrollView();
+
+        if (EditorGUI.EndChangeCheck()) SaveSettings();
+        if (generatePressed)
+        {
+            SaveSettings();
+            Generate();
+        }
+        if (updateStainsPressed)
+        {
+            SaveSettings();
+            GenerateStainsOnly();
+        }
+    }
+
+    private static string GetObjectId(UnityEngine.Object obj)
+    {
+        return obj ? GlobalObjectId.GetGlobalObjectIdSlow(obj).ToString() : string.Empty;
+    }
+
+    private static T ResolveObjectId<T>(string id) where T : UnityEngine.Object
+    {
+        if (string.IsNullOrEmpty(id) || !GlobalObjectId.TryParse(id, out GlobalObjectId globalId))
+            return null;
+        return GlobalObjectId.GlobalObjectIdentifierToObjectSlow(globalId) as T;
+    }
+
+    private static string GetAssetPath(UnityEngine.Object obj) => obj ? AssetDatabase.GetAssetPath(obj) : string.Empty;
+
+    private static T LoadAsset<T>(string path) where T : UnityEngine.Object
+    {
+        return string.IsNullOrEmpty(path) ? null : AssetDatabase.LoadAssetAtPath<T>(path);
+    }
+
+    private void SaveSettings()
+    {
+        var data = new PersistedSettings
+        {
+            splineId = GetObjectId(spline),
+            terrainId = GetObjectId(terrain),
+            topMaterialPath = GetAssetPath(topMaterial),
+            sideMaterialPath = GetAssetPath(sideMaterial),
+            bottomMaterialPath = GetAssetPath(bottomMaterial),
+            damageMaterialPath = GetAssetPath(damageMaterial),
+            curbMaterialPath = GetAssetPath(curbMaterial),
+            stainPrefabPath = GetAssetPath(stainPrefab),
+            outputName = outputName,
+            width = width,
+            thickness = thickness,
+            curbWidth = curbWidth,
+            curbRise = curbRise,
+            sampleStep = sampleStep,
+            heightOffset = heightOffset,
+            topRepeatLength = topRepeatLength,
+            sideRepeatLength = sideRepeatLength,
+            conformToTerrain = conformToTerrain,
+            createCollider = createCollider,
+            edgeDamage = edgeDamage,
+            sideDamage = sideDamage,
+            surfaceDamage = surfaceDamage,
+            saveMeshAsset = saveMeshAsset,
+            alignStainsToTerrain = alignStainsToTerrain,
+            edgeChance = edgeChance,
+            sideChance = sideChance,
+            pitChance = pitChance,
+            edgeDepth = edgeDepth,
+            sideDepth = sideDepth,
+            pitDepth = pitDepth,
+            damageScale = damageScale,
+            seed = seed,
+            stainCount = stainCount,
+            stainSeed = stainSeed,
+            stainScaleMin = stainScaleMin,
+            stainScaleMax = stainScaleMax,
+            stainOffset = stainOffset
+        };
+        EditorPrefs.SetString(SettingsKey, JsonUtility.ToJson(data));
+    }
+
+    private void LoadSettings()
+    {
+        string json = EditorPrefs.GetString(SettingsKey, string.Empty);
+        if (string.IsNullOrEmpty(json)) return;
+
+        PersistedSettings data;
+        try { data = JsonUtility.FromJson<PersistedSettings>(json); }
+        catch { return; }
+        if (data == null || data.version != 1) return;
+
+        spline = ResolveObjectId<SplineContainer>(data.splineId);
+        terrain = ResolveObjectId<Terrain>(data.terrainId);
+        topMaterial = LoadAsset<Material>(data.topMaterialPath);
+        sideMaterial = LoadAsset<Material>(data.sideMaterialPath);
+        bottomMaterial = LoadAsset<Material>(data.bottomMaterialPath);
+        damageMaterial = LoadAsset<Material>(data.damageMaterialPath);
+        curbMaterial = LoadAsset<Material>(data.curbMaterialPath);
+        stainPrefab = LoadAsset<GameObject>(data.stainPrefabPath);
+
+        outputName = data.outputName;
+        width = data.width;
+        thickness = data.thickness;
+        curbWidth = data.curbWidth;
+        curbRise = data.curbRise;
+        sampleStep = data.sampleStep;
+        heightOffset = data.heightOffset;
+        topRepeatLength = data.topRepeatLength;
+        sideRepeatLength = data.sideRepeatLength;
+        conformToTerrain = data.conformToTerrain;
+        createCollider = data.createCollider;
+        edgeDamage = data.edgeDamage;
+        sideDamage = data.sideDamage;
+        surfaceDamage = data.surfaceDamage;
+        saveMeshAsset = data.saveMeshAsset;
+        alignStainsToTerrain = data.alignStainsToTerrain;
+        edgeChance = data.edgeChance;
+        sideChance = data.sideChance;
+        pitChance = data.pitChance;
+        edgeDepth = data.edgeDepth;
+        sideDepth = data.sideDepth;
+        pitDepth = data.pitDepth;
+        damageScale = data.damageScale;
+        seed = data.seed;
+        stainCount = Mathf.Clamp(data.stainCount, 0, 300);
+        stainSeed = data.stainSeed;
+        stainScaleMin = data.stainScaleMin;
+        stainScaleMax = data.stainScaleMax;
+        stainOffset = data.stainOffset;
     }
 
     private static Material Field(string label, Material value) => (Material)EditorGUILayout.ObjectField(label, value, typeof(Material), false);
@@ -266,10 +445,136 @@ public class CurvedStoneRoadBuilderV3 : EditorWindow
             else if(mc)Undo.DestroyObjectImmediate(mc);
             EditorUtility.SetDirty(mf);EditorUtility.SetDirty(mr); EditorSceneManager.MarkSceneDirty(go.scene);
             if(saveMeshAsset)AssetDatabase.SaveAssets();
+
+            PlaceStains(go, distances, length);
+            EditorSceneManager.MarkSceneDirty(go.scene);
             Selection.activeGameObject=go;SceneView.FrameLastActiveSceneView();
             Debug.Log($"[石砖道路 V3] 已生成 {segments} 段，{vertices.Count} 顶点，约 {length:F1} 米。",go);
         }
         catch(Exception e){Debug.LogException(e); EditorUtility.DisplayDialog("V3 生成失败",e.Message+"\n请检查 Console 控制台。","确定");}
+    }
+
+    private void GenerateStainsOnly()
+    {
+        if (spline == null || stainPrefab == null)
+        {
+            EditorUtility.DisplayDialog("无法更新污渍", "请先指定道路曲线和污渍预制体。", "确定");
+            return;
+        }
+
+        Transform road = spline.transform.Find(outputName);
+        if (road == null)
+        {
+            EditorUtility.DisplayDialog("找不到道路", "请先生成一次道路，或检查“生成对象名称”是否与现有道路一致。", "确定");
+            return;
+        }
+
+        try
+        {
+            const int probes = 2500;
+            float[] distances = new float[probes + 1];
+            Vector3 previous = Position(0);
+            for (int i = 1; i <= probes; ++i)
+            {
+                Vector3 current = Position(i / (float)probes);
+                distances[i] = distances[i - 1] + Vector3.Distance(current, previous);
+                previous = current;
+            }
+
+            float length = distances[probes];
+            if (length < 0.05f) throw new Exception("Spline 长度太短。");
+
+            PlaceStains(road.gameObject, distances, length);
+            EditorSceneManager.MarkSceneDirty(road.gameObject.scene);
+            Debug.Log($"[石砖道路 V3] 已更新自定义污渍：{(stainPrefab != null ? stainCount : 0)} 个。", road.gameObject);
+        }
+        catch (Exception e)
+        {
+            Debug.LogException(e);
+            EditorUtility.DisplayDialog("更新污渍失败", e.Message, "确定");
+        }
+    }
+
+    private void PlaceStains(GameObject road, float[] distances, float length)
+    {
+        // 只清理由本工具生成的污渍，不动道路网格和用户自己的子物体。
+        for (int i = road.transform.childCount - 1; i >= 0; --i)
+        {
+            Transform child = road.transform.GetChild(i);
+            if (child.name.StartsWith(StainPrefix, StringComparison.Ordinal))
+                Undo.DestroyObjectImmediate(child.gameObject);
+        }
+
+        if (stainPrefab == null || stainCount <= 0) return;
+
+        float minScale = Mathf.Max(0.01f, Mathf.Min(stainScaleMin, stainScaleMax));
+        float maxScale = Mathf.Max(minScale, Mathf.Max(stainScaleMin, stainScaleMax));
+        float halfWidth = Mathf.Max(0f, width * 0.5f - Mathf.Max(curbWidth, 0.05f));
+        int probes = distances.Length - 1;
+        System.Random random = new System.Random(stainSeed);
+
+        for (int i = 0; i < stainCount; ++i)
+        {
+            float distance = (float)random.NextDouble() * length;
+            int k = Array.BinarySearch(distances, distance);
+            if (k < 0) k = ~k;
+            k = Mathf.Clamp(k, 1, probes);
+
+            float span = Mathf.Max(0.000001f, distances[k] - distances[k - 1]);
+            float alpha = Mathf.Clamp01((distance - distances[k - 1]) / span);
+            float t = ((k - 1) + alpha) / probes;
+
+            Vector3 center = Position(t);
+            Vector3 forward = Position(Mathf.Min(1f, t + 0.0003f)) -
+                              Position(Mathf.Max(0f, t - 0.0003f));
+            forward.y = 0f;
+            if (forward.sqrMagnitude < 1e-8f)
+            {
+                forward = spline.transform.TransformDirection((Vector3)spline.EvaluateTangent(0, t));
+                forward.y = 0f;
+            }
+            if (forward.sqrMagnitude < 1e-8f) forward = Vector3.forward;
+            forward.Normalize();
+
+            Vector3 right = new Vector3(forward.z, 0f, -forward.x);
+            float lateral = Mathf.Lerp(-halfWidth, halfWidth, (float)random.NextDouble());
+            Vector3 position = OnTerrain(center + right * lateral);
+            Vector3 normal = Vector3.up;
+
+            if (alignStainsToTerrain && conformToTerrain && terrain != null)
+            {
+                Vector3 origin = terrain.transform.position;
+                Vector3 local = position - origin;
+                Vector3 size = terrain.terrainData.size;
+                if (size.x > 0f && size.z > 0f &&
+                    local.x >= 0f && local.z >= 0f && local.x <= size.x && local.z <= size.z)
+                {
+                    float u = Mathf.Clamp01(local.x / size.x);
+                    float v = Mathf.Clamp01(local.z / size.z);
+                    normal = terrain.transform.TransformDirection(terrain.terrainData.GetInterpolatedNormal(u, v)).normalized;
+                    position.y = terrain.SampleHeight(position) + origin.y + heightOffset;
+                }
+            }
+
+            position += normal * stainOffset;
+            GameObject instance = PrefabUtility.InstantiatePrefab(stainPrefab, road.scene) as GameObject;
+            if (instance == null) instance = UnityEngine.Object.Instantiate(stainPrefab);
+            Undo.RegisterCreatedObjectUndo(instance, "生成道路污渍");
+            instance.name = $"{StainPrefix}{i + 1:000}";
+            instance.transform.SetParent(road.transform, true);
+            instance.transform.position = position;
+
+            float yaw = (float)random.NextDouble() * 360f;
+            Quaternion prefabRotation = stainPrefab.transform.rotation;
+            if (alignStainsToTerrain)
+                instance.transform.rotation = Quaternion.FromToRotation(Vector3.up, normal) *
+                                              Quaternion.AngleAxis(yaw, Vector3.up) * prefabRotation;
+            else
+                instance.transform.rotation = Quaternion.AngleAxis(yaw, Vector3.up) * prefabRotation;
+
+            float scale = Mathf.Lerp(minScale, maxScale, (float)random.NextDouble());
+            instance.transform.localScale = stainPrefab.transform.localScale * scale;
+        }
     }
 
     private Vector3 Position(float t) => (Vector3)spline.EvaluatePosition(0,Mathf.Clamp01(t));

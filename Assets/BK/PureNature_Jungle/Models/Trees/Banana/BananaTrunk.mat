@@ -181,19 +181,19 @@ Material:
     - _WindBurstsScale: 1
     - _WindBurstsSpeed: 50
     - _WindDebugView: 0
-    - _WindMultiplier: 0.5
+    - _WindMultiplier: 0.3
     - _WindMultiplier1: 1
     - _WindPosContrast: 6.5
     - _WindPosition: 6
     - _WindPower: 0.01
     - _WindSpeed: 1
     - _WindTrunkContrast: 0
-    - _WindTrunkPosition: 2.5
+    - _WindTrunkPosition: 1
     - _ZWrite: 1
     - __dirty: 0
     m_Colors:
-    - _2ndColor: {r: 1, g: 1, b: 1, a: 1}
-    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _2ndColor: {r: 0.8773585, g: 0.8773585, b: 0.8773585, a: 1}
+    - _Color: {r: 0.8679245, g: 0.6918832, b: 0.6918832, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

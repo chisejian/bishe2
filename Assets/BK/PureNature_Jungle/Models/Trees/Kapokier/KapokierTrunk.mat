@@ -130,7 +130,7 @@ Material:
     - _UVSec: 0
     - _UseVertexColor: 1
     - _VertexOcclusionPower: 0.1
-    - _WindMultiplier: 1
+    - _WindMultiplier: 0.3
     - _WindTrunkContrast: 2
     - _WindTrunkPosition: 6
     - _ZWrite: 1

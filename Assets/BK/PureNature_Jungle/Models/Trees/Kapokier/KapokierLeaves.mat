@@ -176,7 +176,7 @@ Material:
     - _MicroSpeed: 2
     - _MicroWind: 0
     - _MicroWindChannel: 2
-    - _MicroWindMultiplier: 0.5
+    - _MicroWindMultiplier: 0.2
     - _Mode: 0
     - _NoiseScale: 0.02
     - _NormalAttenuation: 1
@@ -209,7 +209,7 @@ Material:
     - _TransNormalDistortion: 1
     - _TransScattering: 1
     - _TransShadow: 0.6
-    - _TransStrength: 1
+    - _TransStrength: 0.6
     - _Translucency: 1
     - _TrunkWindAmplitude: 0.09
     - _TrunkWindPower: 1
@@ -220,13 +220,13 @@ Material:
     - _WindBurstsScale: 1
     - _WindBurstsSpeed: 50
     - _WindDebugView: 0
-    - _WindMultiplier: 1
+    - _WindMultiplier: 0.4
     - _WindMultiplier2: 1
     - _WindPower: 0.01
     - _WindSpeed: 1
     - _WindTrunkContrast: 2
     - _WindTrunkContrast1: 50
-    - _WindTrunkPosition: 6
+    - _WindTrunkPosition: 5.88
     - _WindTrunkPosition1: 12
     - _ZWrite: 1
     - __dirty: 0
@@ -237,7 +237,7 @@ Material:
     - _ColorVariation: {r: 0.27471778, g: 0.4245283, b: 0.12281949, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
     - _GradientColor: {r: 0.32809457, g: 0.7924528, b: 0, a: 1}
-    - _MainColor: {r: 0.28959543, g: 0.4339623, b: 0.15966532, a: 1}
+    - _MainColor: {r: 0.3794055, g: 0.5471698, b: 0.3961819, a: 1}
     - _ScatteringColor: {r: 0.56218994, g: 1, b: 0, a: 0}
     - _SpecularColor: {r: 0.39215687, g: 0.39215687, b: 0.39215687, a: 1}
     - _Tiling: {r: 4, g: 4, b: 0, a: 0}
