@@ -1,0 +1,23 @@
+已生成 21，失败/跳过问题 0，空项 1
+原始 FBX、材质、Gaia 目录未修改。
+成功 PW_Plant_Acid_Clover 1 → Details/PW_Plant_Acid_Clover_1_LOD1_Detail
+成功 PW_Plant_Bush_01 1 → Details/PW_Plant_Bush_01_1_LOD1_Detail
+成功 PW_Plant_Bush_02 1 → Details/PW_Plant_Bush_02_1_LOD1_Detail
+成功 PW_Plant_Bush_03 1 → Details/PW_Plant_Bush_03_1_LOD1_Detail
+成功 PW_Plant_Bush_04 1 → Details/PW_Plant_Bush_04_1_LOD1_Detail
+成功 PW_Plant_Bush_05 1 → Details/PW_Plant_Bush_05_1_LOD1_Detail
+成功 PW_Plant_Bush_06 1 → Details/PW_Plant_Bush_06_1_LOD1_Detail
+成功 PW_Plant_Fern_01 1 → Details/PW_Plant_Fern_01_1_LOD1_Detail
+成功 PW_Plant_Fern_02 1 → Details/PW_Plant_Fern_02_1_LOD1_Detail
+成功 PW_Plant_Fern_Realistic_02 1 → Details/PW_Plant_Fern_Realistic_02_1_LOD1_Detail
+成功 PW_Plant_Fern_Realistic_03 1 → Details/PW_Plant_Fern_Realistic_03_1_LOD1_Detail
+成功 PW_Plant_Flower_Mountain_01 1 → Details/PW_Plant_Flower_Mountain_01_1_LOD1_Detail
+成功 PW_Plant_Flower_Mountine_02 1 → Details/PW_Plant_Flower_Mountine_02_1_LOD1_Detail
+成功 PW_Plant_Flower_Mountine_03 1 → Details/PW_Plant_Flower_Mountine_03_1_LOD1_Detail
+成功 PW_Plant_Grass_Mountine_01 1 → Details/PW_Plant_Grass_Mountine_01_1_LOD1_Detail
+成功 PW_Plants_Berry_Bushes_01 1 → Details/PW_Plants_Berry_Bushes_01_1_LOD1_Detail
+成功 PW_Plants_Berry_Bushes_02 1 → Details/PW_Plants_Berry_Bushes_02_1_LOD1_Detail
+成功 PW_Plants_Berry_Bushes_03 1 → Details/PW_Plants_Berry_Bushes_03_1_LOD1_Detail
+成功 PW_Plants_Berry_Bushes_04 1 → Details/PW_Plants_Berry_Bushes_04_1_LOD1_Detail
+成功 PW_Plants_Bushes_01 1 → Details/PW_Plants_Bushes_01_1_LOD1_Detail
+成功 PW_Plants_Bushes_02 1 → Details/PW_Plants_Bushes_02_1_LOD1_Detail

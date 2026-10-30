@@ -1,0 +1,3 @@
+已生成 1，失败/跳过问题 0，空项 0
+原始 FBX、材质、Gaia 目录未修改。
+成功 PW_Tree_Pine_01_Long 1 → Trees/PW_Tree_Pine_01_Long_1_Tree

@@ -60,6 +60,22 @@ PrefabInstance:
       propertyPath: m_Name
       value: Tropica2
       objectReference: {fileID: 0}
+    - target: {fileID: 4473548757441842896, guid: 76d8723b758844679cabd82cae0f9056, type: 3}
+      propertyPath: m_LocalScale.x
+      value: 2.69
+      objectReference: {fileID: 0}
+    - target: {fileID: 4473548757441842896, guid: 76d8723b758844679cabd82cae0f9056, type: 3}
+      propertyPath: m_LocalScale.y
+      value: 2.69
+      objectReference: {fileID: 0}
+    - target: {fileID: 4473548757441842896, guid: 76d8723b758844679cabd82cae0f9056, type: 3}
+      propertyPath: m_LocalScale.z
+      value: 2.69
+      objectReference: {fileID: 0}
+    - target: {fileID: 4473548757441842896, guid: 76d8723b758844679cabd82cae0f9056, type: 3}
+      propertyPath: m_ConstrainProportionsScale
+      value: 1
+      objectReference: {fileID: 0}
     - target: {fileID: 4742473837712756890, guid: 76d8723b758844679cabd82cae0f9056, type: 3}
       propertyPath: m_FadeMode
       value: 0
