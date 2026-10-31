@@ -206,13 +206,13 @@ Material:
     - _DiffusionProfile_Asset: {r: -9.2396434e+33, g: 2.6337685e-36, b: 2.14897e-38, a: 6.8169325e-31}
     - _DoubleSidedConstants: {r: 1, g: 1, b: -1, a: 1}
     - _EmissionColor: {r: 1, g: 1, b: 1, a: 1}
-    - _PW_CoverLayer0Color: {r: 1, g: 1, b: 1, a: 1}
-    - _PW_CoverLayer1Color: {r: 0.7490196, g: 0.7490196, b: 0.7490196, a: 1}
-    - _PW_SSSTint: {r: 1, g: 1, b: 1, a: 1}
+    - _PW_CoverLayer0Color: {r: 0.41037738, g: 0.89163595, b: 1, a: 1}
+    - _PW_CoverLayer1Color: {r: 0.8891745, g: 1, b: 0.8349056, a: 1}
+    - _PW_SSSTint: {r: 0.92310536, g: 1, b: 0.4481132, a: 1}
     - _PW_WindTreeFlex: {r: 1.1, g: 1.3, b: 0.01, a: 0}
     - _PW_WindTreeFrequency: {r: 0.2, g: 2, b: 4, a: 0}
     - _PW_WindTreeWidthHeight: {r: 1, g: 1.6, b: 0, a: 0}
-    - _PW_WorldMapColorCover0: {r: 1, g: 1, b: 1, a: 1}
+    - _PW_WorldMapColorCover0: {r: 0.7762181, g: 1, b: 0.6745283, a: 1}
     - _PW_WorldMapColorCover1: {r: 1, g: 1, b: 1, a: 1}
     - _PW_WorldMapColorObject: {r: 0.6037736, g: 0.5183983, b: 0.3218227, a: 1}
   m_BuildTextureStacks: []
