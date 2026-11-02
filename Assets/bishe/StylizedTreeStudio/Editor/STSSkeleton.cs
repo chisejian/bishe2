@@ -16,9 +16,9 @@ internal static class STSSkeleton
     public static string Signature(StylizedTreeAuthoring t)
     {
         // A stable string avoids culture-dependent float formatting and excludes organ seeds.
-        return string.Join("|",t.height.ToString("R",System.Globalization.CultureInfo.InvariantCulture),t.crownWidth.ToString("R",System.Globalization.CultureInfo.InvariantCulture),
+        return string.Join("|","trunk-twist-v055",t.height.ToString("R",System.Globalization.CultureInfo.InvariantCulture),t.crownWidth.ToString("R",System.Globalization.CultureInfo.InvariantCulture),
             t.trunkRadius.ToString("R",System.Globalization.CultureInfo.InvariantCulture),t.branchCount,t.branchLevels,t.secondaryBranches,t.baseStemCount,t.seed,
-            t.crownStart,t.branchRise,t.branchDroop,t.irregularity,t.trunkBend,t.branchTipRatio,(int)t.growthForm,(int)t.species,(int)t.vineLayout,
+            t.crownStart,t.branchRise,t.branchDroop,t.irregularity,t.trunkBend,t.trunkTwist.ToString("R",System.Globalization.CultureInfo.InvariantCulture),t.branchTipRatio,(int)t.growthForm,(int)t.species,(int)t.vineLayout,(int)t.canopyMode,
             t.vineTurns,t.vineWrapRadius,t.vineSag,CurveKey(t.crownProfile),CurveKey(t.radiusProfile),PathKey(t.vinePath),
             t.projectionTarget?t.projectionTarget.GetInstanceID():0,t.projectionDirection.x,t.projectionDirection.y,t.projectionDirection.z,t.projectionDistance,t.surfaceOffset);
     }
@@ -43,13 +43,29 @@ internal static class STSSkeleton
         if(t.growthForm==STSGrowthForm.Vine||t.growthForm==STSGrowthForm.ClimbingFern) Vine(t);
         else if(t.growthForm==STSGrowthForm.Palm) Palm(t);
         else Broadleaf(t);
-        t.generatedBranches=true;t.dataVersion=3;t.growthSignature=Signature(t);
+        t.generatedBranches=true;t.dataVersion=Mathf.Max(3,t.dataVersion);t.growthSignature=Signature(t);
         // Regeneration reuses stable IDs. Remove only anchors whose branch truly disappeared.
         var ids=new HashSet<int>();foreach(var b in t.branches)ids.Add(b.id);
         t.attachments.RemoveAll(a=>a==null||!ids.Contains(a.branchId));
     }
+    static void TwistTrunk(StylizedTreeAuthoring t,List<Vector3> points,int stem=0)
+    {
+        if(t.trunkTwist<=0||points.Count<2)return;
+        var rng=STSRandom.For(t.seed,stem,255);
+        float phase=STSRandom.Range(rng,0,Mathf.PI*2);
+        float amplitude=(points[points.Count-1]-points[0]).magnitude*.085f*t.trunkTwist;
+        // Pin both ends and fade the deformation tangent to zero there, so the
+        // root stays planted and the crown does not drift away from the trunk.
+        for(int k=1;k<points.Count-1;k++)
+        {
+            float u=k/(float)(points.Count-1),fade=Mathf.Sin(u*Mathf.PI);
+            float angle=phase+u*Mathf.PI*3;
+            points[k]+=new Vector3(Mathf.Cos(angle),0,Mathf.Sin(angle))*(amplitude*fade*fade);
+        }
+    }
     static void Broadleaf(StylizedTreeAuthoring t)
     {
+        if(t.canopyMode==STSCanopyMode.LayeredClusters&&t.growthForm==STSGrowthForm.Tree){DenseTree(t);return;}
         int stems=t.growthForm==STSGrowthForm.Shrub?Mathf.Clamp(t.baseStemCount,1,8):1;
         var roots=new List<StylizedTreeBranch>();
         for(int s=0;s<stems;s++)
@@ -57,7 +73,9 @@ internal static class STSSkeleton
             var rng=STSRandom.For(t.seed,s);float angle=2*Mathf.PI*s/stems;
             Vector3 lean=new Vector3(Mathf.Cos(angle),0,Mathf.Sin(angle))*(stems>1?t.crownWidth*.22f:t.height*t.trunkBend);
             float h=t.height*(s==0?1:STSRandom.Range(rng,.72f,1));var points=new List<Vector3>();
-            for(int k=0;k<=5;k++) {float f=k/5f;points.Add(Vector3.up*h*f+lean*f*f+new Vector3(Mathf.Sin(f*5+s),0,Mathf.Cos(f*4+s))*t.trunkBend*t.height*.08f*f);}
+            int segments=t.trunkTwist>0?24:5;
+            for(int k=0;k<=segments;k++) {float f=k/(float)segments;points.Add(Vector3.up*h*f+lean*f*f+new Vector3(Mathf.Sin(f*5+s),0,Mathf.Cos(f*4+s))*t.trunkBend*t.height*.08f*f);}
+            TwistTrunk(t,points,s);
             roots.Add(Add(t,points,t.trunkRadius*(stems>1?.7f:1),trunk:true));
         }
         var current=new List<StylizedTreeBranch>();
@@ -84,6 +102,71 @@ internal static class STSSkeleton
             }
             current=next;
         }
+
+    }
+    static void DenseTree(StylizedTreeAuthoring t)
+    {
+        var points=new List<Vector3>();
+        int segments=t.trunkTwist>0?24:8;
+        for(int k=0;k<=segments;k++)
+        {
+            float u=k/(float)segments;
+            points.Add(new Vector3(Mathf.Sin(u*3)*t.trunkBend*t.height*.3f,t.height*u,Mathf.Sin(u*4+1)*t.trunkBend*t.height*.18f*u));
+        }
+        TwistTrunk(t,points);
+        var trunk=Add(t,points,t.trunkRadius,trunk:true);var current=new List<StylizedTreeBranch>();
+        for(int i=0;i<t.branchCount;i++)
+        {
+            var rng=STSRandom.For(t.seed,i,217);float tier=(i+.5f)/t.branchCount;
+            float at=Mathf.Lerp(.25f,.83f,tier),angle=i*2.39996323f+STSRandom.Range(rng,-.18f,.18f);
+            Vector3 start=STSPath.OnBranch(trunk,at).p;
+            float spread=t.crownWidth*.5f*Mathf.Sqrt(Mathf.Max(.2f,1-Mathf.Pow((tier-.42f)*1.1f,2)))*STSRandom.Range(rng,.78f,1.02f);
+            if(t.crownProfile!=null)spread*=Mathf.Lerp(.8f,1.12f,Mathf.Clamp01(t.crownProfile.Evaluate(tier)));
+            Vector3 end=new Vector3(Mathf.Cos(angle)*spread,t.height*(Mathf.Lerp(.46f,.9f,tier)+STSRandom.Range(rng,-.025f,.025f)),Mathf.Sin(angle)*spread*.92f);
+            current.Add(DenseShoot(t,trunk,at,start,end,t.trunkRadius*.42f,rng));
+        }
+        for(int level=1;level<t.branchLevels;level++)
+        {
+            var next=new List<StylizedTreeBranch>();int children=level==1?t.secondaryBranches:Mathf.Min(2,t.secondaryBranches);
+            foreach(var parent in current)for(int i=0;i<children;i++)
+            {
+                if(t.branches.Count>=900)break;
+                var rng=STSRandom.For(t.seed,parent.id*11+i,level+233);
+                float at=Mathf.Lerp(.48f,.96f,(i+.5f)/children);STSFrame frame=STSPath.OnBranch(parent,at);
+                float angle=Mathf.Atan2(frame.tangent.z,frame.tangent.x)+(i%2==0?-1:1)*STSRandom.Range(rng,.7f,1.65f);
+                float length=STSPath.Length(parent.points)*STSRandom.Range(rng,.38f,.62f);
+                Vector3 d=new Vector3(Mathf.Cos(angle),STSRandom.Range(rng,-.18f,.5f),Mathf.Sin(angle)).normalized;
+                Vector3 end=frame.p+d*length;
+                Vector3 center=Vector3.up*t.height*.7f,delta=end-center;
+                float envelope=Mathf.Sqrt(delta.x*delta.x/(t.crownWidth*t.crownWidth*.3f)+delta.z*delta.z/(t.crownWidth*t.crownWidth*.27f)+delta.y*delta.y/(t.height*t.height*.105f));
+                if(envelope>1)end=center+delta/envelope;
+                next.Add(DenseShoot(t,parent,at,frame.p,end,parent.radius*.5f,rng));
+            }
+            current=next;
+        }
+        // Short upper shoots connect the formerly bare central crown to the trunk.
+        // Append after existing tiers so their stable branch IDs are preserved.
+        Vector3 top=trunk.points[trunk.points.Count-1];int upperCount=Mathf.Clamp(t.branchCount/2,5,10);
+        for(int i=0;i<upperCount;i++)
+        {
+            var rng=STSRandom.For(t.seed,i,251);float u=(i+.5f)/upperCount;
+            float at=Mathf.Lerp(.8f,.96f,u),angle=i*2.39996323f+.7f;
+            float reach=t.crownWidth*Mathf.Lerp(.07f,.25f,Mathf.Sqrt(u));
+            Vector3 end=top+new Vector3(Mathf.Cos(angle)*reach,-t.height*(.025f+.025f*u),Mathf.Sin(angle)*reach);
+            DenseShoot(t,trunk,at,STSPath.OnBranch(trunk,at).p,end,t.trunkRadius*.14f,rng);
+        }
+    }
+    static StylizedTreeBranch DenseShoot(StylizedTreeAuthoring t,StylizedTreeBranch parent,float at,Vector3 start,Vector3 end,float radius,System.Random rng)
+    {
+        var points=new List<Vector3>();Vector3 side=Vector3.Cross(end-start,Vector3.up).normalized;
+        float wobble=STSRandom.Range(rng,-1,1)*t.irregularity;
+        for(int k=0;k<=3;k++)
+        {
+            float f=k/3f;
+            points.Add(Vector3.Lerp(start,end,f)+Vector3.up*Mathf.Sin(f*Mathf.PI)*(end-start).magnitude*.08f+side*Mathf.Sin(f*Mathf.PI)*wobble*.45f);
+        }
+        float profile=parent.isTrunk?Mathf.Max(.015f,t.radiusProfile.Evaluate(at)):Mathf.Lerp(1,t.branchTipRatio,at);
+        return Add(t,points,Mathf.Max(.002f,Mathf.Min(radius,parent.radius*profile*.85f)),parent.id,at);
     }
     static StylizedTreeBranch Shoot(StylizedTreeAuthoring t,StylizedTreeBranch parent,float at,float angle,float length,float rise,float radius,System.Random rng)
     {
@@ -101,7 +184,9 @@ internal static class STSSkeleton
     static void Palm(StylizedTreeAuthoring t)
     {
         var trunk=new List<Vector3>();
-        for(int k=0;k<=16;k++) {float f=k/16f;trunk.Add(new Vector3(Mathf.Sin(f*2)*t.trunkBend*t.height, f*t.height,0));}
+        int segments=t.trunkTwist>0?24:16;
+        for(int k=0;k<=segments;k++) {float f=k/(float)segments;trunk.Add(new Vector3(Mathf.Sin(f*2)*t.trunkBend*t.height, f*t.height,0));}
+        TwistTrunk(t,trunk);
         var root=Add(t,trunk,t.trunkRadius,trunk:true);Vector3 top=trunk[trunk.Count-1];
         for(int i=0;i<t.branchCount;i++)
         {

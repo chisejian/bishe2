@@ -9,6 +9,7 @@ Shader "StylizedTreeStudio/VertexColor"
         _ShadeColor ("暗面颜色 / Shade", Color) = (0.57,0.65,0.62,1)
         _LightDirection ("造型光方向 / Art Light Direction", Vector) = (0.4,0.8,0.3,0)
         _ShadeSteps ("明暗层数 / Shade Steps", Range(1,6)) = 3
+        [Enum(UnityEngine.Rendering.CullMode)] _Cull ("剔除 / Cull", Float) = 2
     }
     CGINCLUDE
     #include "UnityCG.cginc"
@@ -57,7 +58,7 @@ Shader "StylizedTreeStudio/VertexColor"
     SubShader
     {
         Tags { "RenderPipeline"="UniversalPipeline" "RenderType"="TransparentCutout" "Queue"="AlphaTest" }
-        Cull Back ZWrite On
+        Cull [_Cull] ZWrite On
         Pass
         {
             Tags { "LightMode"="SRPDefaultUnlit" }
@@ -71,7 +72,7 @@ Shader "StylizedTreeStudio/VertexColor"
     SubShader
     {
         Tags { "RenderType"="TransparentCutout" "Queue"="AlphaTest" }
-        Cull Back ZWrite On
+        Cull [_Cull] ZWrite On
         Pass
         {
             Tags { "LightMode"="Always" }
