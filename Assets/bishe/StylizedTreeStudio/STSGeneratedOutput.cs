@@ -12,9 +12,4 @@ public class STSGeneratedOutput : MonoBehaviour
     public bool complete;
     public int highDetailTriangles;
     public int highDetailVertices;
-    public int leafCardCount,flowerCardCount;
-    public bool alphaSurfaceVerified;
-    public bool hasBounds;
-    public Vector3 localMinimum,localMaximum;
-    public float localModelHeight,localModelWidth;
 }

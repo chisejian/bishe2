@@ -7,15 +7,12 @@ internal static class STSPresets
     public static void Apply(StylizedTreeAuthoring t, STSPlantSpecies species)
     {
         // Reset parameters using a temporary component. Material choices survive a species switch.
-        var leaves=t.leafCards;var twigs=t.twigCards;var blooms=t.bloomCards;var fruits=t.fruitCards;var barkMap=t.barkColor;var barkNormal=t.barkNormal;string materials=t.materialSetId;
         Material bark=t.barkMaterial, leaf=t.leafMaterial, flower=t.flowerMaterial, center=t.flowerCenterMaterial, fruit=t.fruitMaterial;
         var tmp=new GameObject("STS_PresetDefaults") {hideFlags=HideFlags.HideAndDontSave};
         try { JsonUtility.FromJsonOverwrite(JsonUtility.ToJson(tmp.AddComponent<StylizedTreeAuthoring>()),t); }
         finally { Object.DestroyImmediate(tmp); }
         t.barkMaterial=bark;t.leafMaterial=leaf;t.flowerMaterial=flower;t.flowerCenterMaterial=center;t.fruitMaterial=fruit;
-        t.leafCards=leaves;t.twigCards=twigs;t.bloomCards=blooms;t.fruitCards=fruits;t.barkColor=barkMap;t.barkNormal=barkNormal;t.materialSetId=materials;
-        if(t.leafCards!=null&&t.leafCards.color&&UnityEditor.AssetDatabase.GetAssetPath(t.leafCards.color).StartsWith(STSMaterials.Tests))t.leafCards.color=null;
-        t.species=species;t.dataVersion=5;
+        t.species=species;t.dataVersion=3;
         switch(species)
         {
             case STSPlantSpecies.CrepeMyrtle:
@@ -67,13 +64,6 @@ internal static class STSPresets
                 t.flowersPerCluster=4;t.inflorescenceLength=.2f;t.flowerSize=.065f;t.petalCount=3;t.petalWidth=.9f;t.petalCup=.2f;
                 t.flowerTint=new Color(.94f,.16f,.51f);t.flowerCenterTint=new Color(1,.98f,.82f);break;
         }
-        if(t.growthForm==STSGrowthForm.Tree||t.growthForm==STSGrowthForm.Palm)
-        {
-            t.height=species==STSPlantSpecies.RoyalPalm?26:species==STSPlantSpecies.Pomelo||species==STSPlantSpecies.Plumeria?20:24;
-            t.crownWidth=t.height*(t.growthForm==STSGrowthForm.Palm?.4f:species==STSPlantSpecies.WhiteChampaca?.57f:.76f);
-            if(t.growthForm==STSGrowthForm.Tree){t.leafTint=new Color(.32f,.49f,.16f);t.leafColorVariation=.12f;}
-        }
-        t.useSimpleRecipe=true;STSQuickRecipe.Apply(t);
         STSSkeleton.Generate(t);
     }
 }

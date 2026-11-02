@@ -24,7 +24,6 @@ public enum STSFlowerGrouping { Single, Panicle, TipCluster }
 public enum STSFacing { Up, Outward, AlongBranch, Down }
 public enum STSVineLayout { FreeCurve, Climb, WrapColumn, Trellis, Hanging }
 public enum STSOrganKind { Flower, Leaf, Fruit }
-public enum STSCanopyMode { IndividualLeaves, LayeredClusters }
 
 [Serializable]
 public class STSPlantAttachment
@@ -41,20 +40,6 @@ public class STSPlantAttachment
 [ExecuteAlways, DisallowMultipleComponent]
 public class StylizedTreeAuthoring : MonoBehaviour
 {
-    [Header("面片贴图 / Card Textures")]
-    public Texture2D barkColor;
-    public Texture2D barkNormal;
-    public STSCardMap leafCards = new STSCardMap();
-    public STSCardMap twigCards = new STSCardMap();
-    public STSCardMap bloomCards = new STSCardMap();
-    public STSCardMap fruitCards = new STSCardMap();
-    [Range(.01f,.5f)] public float bloomSurfaceOffset = .06f;
-    [Range(.2f,3f)] public float bloomScale = 1f;
-    [Range(0,.6f)] public float windStrength = .12f;
-    public bool showTestTextures = true;
-    public string materialSetId;
-    [Range(0,1)] public float leafClusterSoftness = .9f;
-    [Range(0,.6f)] public float leafSmoothness = .24f;
     [Header("物种与生长形式 / Species & Growth")]
     public STSPlantSpecies species;
     public STSGrowthForm growthForm;
@@ -63,31 +48,19 @@ public class StylizedTreeAuthoring : MonoBehaviour
     [Min(0.001f)] public float trunkRadius = 0.25f;
     [Range(1, 8)] public int baseStemCount = 1;
     [Range(1, 30)] public int branchCount = 7;
-    [Range(1, 4)] public int branchLevels = 2;
+    [Range(1, 3)] public int branchLevels = 2;
     [Range(1, 4)] public int secondaryBranches = 2;
     [Range(0.05f, 0.95f)] public float crownStart = 0.4f;
     [Range(-0.5f, 1.5f)] public float branchRise = 0.4f;
     [Range(0, 1)] public float branchDroop = 0.15f;
     [Range(0, 1)] public float irregularity = 0.35f;
     [Range(0, 1)] public float trunkBend = 0.12f;
-    // Additional smooth trunk curvature; zero preserves the existing silhouette.
-    [Range(0, 1)] public float trunkTwist;
     [Range(0.03f, 0.7f)] public float branchTipRatio = 0.18f;
     [Range(3, 12)] public int radialSides = 6;
     public AnimationCurve crownProfile = new AnimationCurve(new Keyframe(0, 0.65f), new Keyframe(0.5f, 1), new Keyframe(1, 0.3f));
     public AnimationCurve radiusProfile = AnimationCurve.Linear(0, 1, 1, 0.08f);
     public bool lockBranches;
     public bool livePreview = true;
-
-    [Header("简单模式 / Simple Controls")]
-    public bool useSimpleRecipe;
-    [Range(0, 1)] public float branchFullness = .8f;
-    [Range(0, 1)] public float canopyFullness = .9f;
-    // Scales complete leaf cards, including the crown cap and palm fronds.
-    [Range(.2f, 3f)] public float leafScale = 1f;
-    [Range(0, 1)] public float flowerAmount = .7f;
-    [Range(0, 1)] public float topBloomDensity = .35f;
-    public STSCanopyMode canopyMode;
 
     [Header("独立随机种子 / Independent Seeds")]
     public int seed = 42;
@@ -119,7 +92,6 @@ public class StylizedTreeAuthoring : MonoBehaviour
     public STSFlowerMode flowerMode;
     public STSFlowerShape flowerShape;
     public STSFlowerGrouping flowerGrouping;
-    public bool simplifiedFlowerClusters = true;
     public STSFacing flowerFacing = STSFacing.Outward;
     [Range(1, 20)] public int flowersPerCluster = 5;
     [Min(0.01f)] public float inflorescenceLength = 0.35f;

@@ -2,6 +2,6 @@ using UnityEngine;
 
 public class STSPlantMeshBundle : ScriptableObject
 {
-    public string pluginVersion = "0.5.4";
+    public string pluginVersion = "0.3.0";
     public string plantName;
 }
