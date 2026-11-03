@@ -30623,14 +30623,6 @@ MonoBehaviour:
   complete: 1
   highDetailTriangles: 6452
   highDetailVertices: 11732
-  leafCardCount: 1482
-  flowerCardCount: 574
-  alphaSurfaceVerified: 1
-  hasBounds: 1
-  localMinimum: {x: -12.846161, y: -0.045116864, z: -12.174231}
-  localMaximum: {x: 12.568527, y: 27.585882, z: 11.996893}
-  localModelHeight: 27.630999
-  localModelWidth: 25.414688
 --- !u!1001 &428056764
 PrefabInstance:
   m_ObjectHideFlags: 0
@@ -58773,59 +58765,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: da6e4b1a984d7d44789b838ca7a65e67, type: 3}
   m_Name: 
   m_EditorClassIdentifier: Assembly-CSharp::StylizedTreeAuthoring
-  barkColor: {fileID: 2800000, guid: e9b71f2cd23d68148b56401b5c865730, type: 3}
-  barkNormal: {fileID: 0}
-  leafCards:
-    color: {fileID: 0}
-    normal: {fileID: 0}
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 1
-      height: 1
-    tint: {r: 1, g: 1, b: 1, a: 1}
-    cutoff: 0.35
-  twigCards:
-    color: {fileID: 0}
-    normal: {fileID: 0}
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 1
-      height: 1
-    tint: {r: 1, g: 1, b: 1, a: 1}
-    cutoff: 0.35
-  bloomCards:
-    color: {fileID: 0}
-    normal: {fileID: 0}
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 1
-      height: 1
-    tint: {r: 1, g: 1, b: 1, a: 1}
-    cutoff: 0.35
-  fruitCards:
-    color: {fileID: 0}
-    normal: {fileID: 0}
-    uv:
-      serializedVersion: 2
-      x: 0
-      y: 0
-      width: 1
-      height: 1
-    tint: {r: 1, g: 1, b: 1, a: 1}
-    cutoff: 0.35
-  bloomSurfaceOffset: 0.06
-  bloomScale: 1
-  windStrength: 0.12
-  showTestTextures: 1
-  materialSetId: 89e990c9235c41f6bd8add856c9af3d2
-  leafClusterSoftness: 0.9
-  leafSmoothness: 0.24
   species: 8
   growthForm: 0
   height: 20
@@ -58840,7 +58779,6 @@ MonoBehaviour:
   branchDroop: 0.15
   irregularity: 0.35
   trunkBend: 0.07
-  trunkTwist: 0
   branchTipRatio: 0.24
   radialSides: 8
   crownProfile:
@@ -58902,13 +58840,6 @@ MonoBehaviour:
     m_RotationOrder: 4
   lockBranches: 0
   livePreview: 1
-  useSimpleRecipe: 1
-  branchFullness: 0.8
-  canopyFullness: 0.9
-  leafScale: 1
-  flowerAmount: 0.7
-  topBloomDensity: 0.35
-  canopyMode: 1
   seed: 42
   leafSeed: 153
   flowerSeed: 731
@@ -58934,7 +58865,6 @@ MonoBehaviour:
   flowerMode: 0
   flowerShape: 6
   flowerGrouping: 2
-  simplifiedFlowerClusters: 1
   flowerFacing: 0
   flowersPerCluster: 5
   inflorescenceLength: 0.22
@@ -157387,14 +157317,6 @@ MonoBehaviour:
   complete: 1
   highDetailTriangles: 3244
   highDetailVertices: 5509
-  leafCardCount: 655
-  flowerCardCount: 313
-  alphaSurfaceVerified: 1
-  hasBounds: 1
-  localMinimum: {x: -9.141396, y: -0.021720214, z: -8.998215}
-  localMaximum: {x: 9.622824, y: 20.753536, z: 8.670183}
-  localModelHeight: 20.775257
-  localModelWidth: 18.76422
 --- !u!1001 &2078941466
 PrefabInstance:
   m_ObjectHideFlags: 0
