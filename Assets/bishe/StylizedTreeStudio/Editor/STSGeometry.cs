@@ -87,6 +87,10 @@ internal class STSMeshData
     public readonly List<Vector3> n = new List<Vector3>();
     public readonly List<Vector2> uv = new List<Vector2>();
     public readonly List<Color> colors = new List<Color>();
+    public readonly List<Vector2> wind = new List<Vector2>();
+    public readonly List<Vector3> pivots = new List<Vector3>();
+    public readonly List<Vector3> volumeNormals = new List<Vector3>();
+    public readonly List<Vector2> foliageLighting = new List<Vector2>();
     public readonly List<int> triangles = new List<int>();
     public int TriangleCount { get { return triangles.Count / 3; } }
 
@@ -207,6 +211,10 @@ internal class STSMeshData
         for(int i=0;i<v.Count;i++) if(!STSPath.Finite(v[i]) || !STSPath.Finite(n[i])) throw new InvalidOperationException("生成了无效顶点或法线："+name);
         Mesh mesh = new Mesh {name=name, indexFormat=v.Count>65535?IndexFormat.UInt32:IndexFormat.UInt16};
         mesh.SetVertices(v);mesh.SetNormals(n);mesh.SetUVs(0,uv);mesh.SetColors(colors);mesh.SetTriangles(triangles,0);
+        if(wind.Count==v.Count)mesh.SetUVs(1,wind);
+        if(pivots.Count==v.Count)mesh.SetUVs(2,pivots);
+        if(volumeNormals.Count==v.Count)mesh.SetUVs(3,volumeNormals);
+        if(foliageLighting.Count==v.Count)mesh.SetUVs(4,foliageLighting);
         mesh.RecalculateBounds();mesh.RecalculateTangents();return mesh;
     }
 }

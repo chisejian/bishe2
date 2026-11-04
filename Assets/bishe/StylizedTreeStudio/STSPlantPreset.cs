@@ -6,5 +6,7 @@ public class STSPlantPreset : ScriptableObject
     public Material bark, leaves, flowers, centers, fruit;
     public Texture2D flowerTexture;
     public GameObject flowerPrefab;
-    public string pluginVersion = "0.3.0";
+    public Texture2D barkColor,barkNormal;
+    public Texture2D[] cardTextures;
+    public string pluginVersion = "0.5.6";
 }

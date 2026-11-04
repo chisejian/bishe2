@@ -1,0 +1,98 @@
+%YAML 1.1
+%TAG !u! tag:unity3d.com,2011:
+--- !u!21 &2100000
+Material:
+  serializedVersion: 8
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_Name: GAFA_Ill_Foliage_LeavesA
+  m_Shader: {fileID: 4800000, guid: 1b18c7d736fea38469ae0d5d37bc6df7, type: 3}
+  m_Parent: {fileID: 0}
+  m_ModifiedSerializedProperties: 0
+  m_ValidKeywords:
+  - _ALPHATEST_ON
+  - _GAFA_EXACT_COLOR
+  - _NORMALMODE_SPHERE
+  m_InvalidKeywords:
+  - _KIND_CONCRETE
+  m_LightmapFlags: 4
+  m_EnableInstancingVariants: 0
+  m_DoubleSidedGI: 0
+  m_CustomRenderQueue: -1
+  stringTagMap: {}
+  disabledShaderPasses: []
+  m_LockedProperties: 
+  m_SavedProperties:
+    serializedVersion: 3
+    m_TexEnvs:
+    - _BaseMap:
+        m_Texture: {fileID: 2800000, guid: 8b9f55e69f291e545b78bb5e588b9a8b, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _DecalMap:
+        m_Texture: {fileID: 0}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    - _NoiseTex:
+        m_Texture: {fileID: 2800000, guid: 0e1afaed5b8ba5f4bb1abd318e7da33e, type: 3}
+        m_Scale: {x: 1, y: 1}
+        m_Offset: {x: 0, y: 0}
+    m_Ints: []
+    m_Floats:
+    - _AlphaClip: 1
+    - _AmbientFromScene: 1
+    - _BrushNoise: 0.35
+    - _Cull: 2
+    - _Cutoff: 0.5
+    - _Decal: 1
+    - _Dirt: 1
+    - _DryHue: 0.165
+    - _DstBlend: 0
+    - _ExactColor: 1
+    - _Flutter: 0.015
+    - _Grass: 0
+    - _InkId: 704
+    - _InkMode: 2
+    - _InkPerItem: 0
+    - _ItemVertices: 4
+    - _Jitter: 0.04
+    - _Kind: 0
+    - _Moss: 1
+    - _NormalBlend: 0.92
+    - _NormalLift: 0
+    - _NormalMode: 1
+    - _Opacity: 1
+    - _PaintAmount: 0.8
+    - _PaletteGroup: 0
+    - _Rim: 0.06
+    - _Scale: 1
+    - _Seed: 0
+    - _ShadeEdge: -0.12
+    - _ShadeSoftness: 0.04
+    - _Specular: 0
+    - _SrcBlend: 1
+    - _Streaks: 1
+    - _Translucency: 0.25
+    - _Transparent: 0
+    - _UseDecal: 0
+    - _UsePaint: 0
+    - _VertexColorStrength: 1
+    - _Wind: 0.04
+    - _WindSpeed: 1
+    - _ZWrite: 1
+    m_Colors:
+    - _BaseColor: {r: 0.76899993, g: 0.741, b: 0.678, a: 1}
+    - _Color: {r: 1, g: 1, b: 1, a: 1}
+    - _Color2: {r: 1, g: 1, b: 1, a: 1}
+    - _Color3: {r: 1, g: 1, b: 1, a: 1}
+    - _DryColor: {r: 0.7882353, g: 0.74509805, b: 0.49411765, a: 1}
+    - _GroundAmbient: {r: 0.6342527, g: 0.6097116, b: 0.56572837, a: 1}
+    - _MossColor: {r: 0.561, g: 0.6119999, b: 0.35299996, a: 1}
+    - _PaintColor: {r: 0, g: 0, b: 0, a: 1}
+    - _Rect: {r: -10000, g: 10000, b: -10000, a: 10000}
+    - _SkyAmbient: {r: 0.66518503, g: 0.6799757, b: 0.71524084, a: 1}
+    - _TileSize: {r: 1.2, g: 0.6, b: 0, a: 0}
+  m_BuildTextureStacks: []
+  m_AllowLocking: 1

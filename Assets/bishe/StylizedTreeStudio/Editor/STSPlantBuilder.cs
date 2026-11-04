@@ -51,7 +51,7 @@ internal static class STSPlantBuilder
         if(t.radiusProfile==null)t.radiusProfile=AnimationCurve.Linear(0,1,1,.08f);
         if(t.crownProfile==null)t.crownProfile=AnimationCurve.Linear(0,1,1,.3f);
         if(t.dataVersion<3)t.growthSignature=STSSkeleton.Signature(t);
-        t.dataVersion=3;
+        t.dataVersion=Mathf.Max(3,t.dataVersion);
         if(t.branches.Count==0)STSSkeleton.Generate(t);
         foreach(Vector3 p in t.paintedFlowers)
         {
@@ -76,76 +76,93 @@ internal static class STSPlantBuilder
     {
         foreach(var b in t.branches)
         {
-            if(b==null||b.points==null||b.points.Count<2)throw new InvalidOperationException("枝条至少需要两个有效控制点。");
-            if(!STSPath.Finite(b.radius)||b.radius<=0)throw new InvalidOperationException("枝条半径必须大于零。");
-            foreach(Vector3 p in b.points)if(!STSPath.Finite(p))throw new InvalidOperationException("枝条包含 NaN 或 Infinity，已保留上次模型。");
+            if(b==null||b.points==null||b.points.Count<2||!STSPath.Finite(b.radius)||b.radius<=0)throw new InvalidOperationException("枝条数据无效。");
+            foreach(Vector3 p in b.points)if(!STSPath.Finite(p))throw new InvalidOperationException("枝条含无效坐标，已保留上次模型。");
         }
-        foreach(float f in new[]{t.height,t.trunkRadius,t.leafSize,t.flowerSize,t.fruitSize,t.petalWidth,t.petalLength,t.inflorescenceLength})
-            if(!STSPath.Finite(f)||f<=0)throw new InvalidOperationException("植物尺寸必须是有效正数。");
-        if(t.leafClusters<0||t.leafClusters>600||t.randomFlowers<0||t.randomFlowers>300||t.flowersPerCluster<1||t.flowersPerCluster>20||t.fruitCount<0||t.fruitCount>100)
-            throw new InvalidOperationException("数量超出编辑器支持范围，请检查高级参数。");
-        if(t.branches.Count>1000)throw new InvalidOperationException("枝条超过 1000 根，请减少分枝层数。");
-        foreach(var a in t.attachments)if(a!=null&&(!STSPath.Finite(a.offset)||!STSPath.Finite(a.scale)||a.scale<=0))throw new InvalidOperationException("手工花叶果存在无效缩放或坐标。");
-        if(t.enableFlowers&&t.flowerMode==STSFlowerMode.Prefab&&!t.flowerPrefab)throw new InvalidOperationException("预制体花朵模式需要先指定 Flower Prefab。");
-        if(t.enableFlowers&&t.flowerMode==STSFlowerMode.TextureCards&&!t.flowerTexture)throw new InvalidOperationException("贴图花片模式需要先指定透明 PNG。");
+        foreach(float value in new[]{t.height,t.crownWidth,t.bloomScale,t.bloomSurfaceOffset})if(!STSPath.Finite(value)||value<=0)throw new InvalidOperationException("高度、冠幅、花簇大小和偏移须为有效正数。");
+        if(!STSPath.Finite(t.trunkTwist)||t.trunkTwist<0||t.trunkTwist>StylizedTreeAuthoring.MaxTrunkTwist)throw new InvalidOperationException("树干扭曲度须在 0–3 之间。");
+        if(!STSPath.Finite(t.leafScale)||t.leafScale<.2f||t.leafScale>3)throw new InvalidOperationException("叶片大小须在 0.2–3 倍之间。");
+        if(t.branches.Count>1000)throw new InvalidOperationException("枝条超过支持范围。");
+        foreach(var map in new[]{t.leafCards,t.twigCards,t.bloomCards,t.fruitCards})
+        {
+            Rect uv=map.uv;
+            if(!STSPath.Finite(uv.x)||!STSPath.Finite(uv.y)||!STSPath.Finite(uv.width)||!STSPath.Finite(uv.height)||uv.width<=0||uv.height<=0||uv.x<0||uv.y<0||uv.x+uv.width>1.0001f||uv.y+uv.height>1.0001f)
+                throw new InvalidOperationException("UV 区域必须位于 0–1 内，宽高须为有效正数。");
+        }
+        if(t.canopyFullness>0&&!t.leafCards.color)throw new InvalidOperationException("请指定叶簇 PNG，或启用随包测试贴图。");
     }
-    public static bool Build(StylizedTreeAuthoring t)
+    public static bool Build(StylizedTreeAuthoring t,STSAlphaMask testLeaves=null,STSAlphaMask testBlooms=null)
     {
         if(!t||EditorUtility.IsPersistent(t)||EditorApplication.isPlayingOrWillChangePlaymode)return false;
         GameObject staged=null;
         try
         {
-            Migrate(t);
+            Migrate(t);STSMaterials.Defaults(t);
             if(!t.lockBranches&&t.growthSignature!=STSSkeleton.Signature(t))STSSkeleton.Generate(t);
             Validate(t);STSMaterials.Ensure(t);
+            var layout=new STSCardLayout(t,testLeaves,testBlooms);
+            if(t.enableFlowers&&t.bloomCards.color&&testLeaves==null&&(!layout.leafMask.verified||!layout.bloomMask.verified))
+                throw new InvalidOperationException("花簇表面定位需要读取叶簇和花簇 PNG 的 Alpha。请使用项目内的 PNG 源文件。");
+            layout.Build();
             Transform old=t.transform.Find(RootName);
-            if(old&&!old.GetComponent<STSGeneratedOutput>()&&!IsLegacy(old))throw new InvalidOperationException("存在同名的非插件对象 STS_Generated，请先重命名该对象。");
-            if(old&&old.GetComponent<STSGeneratedOutput>()&&old.GetComponent<STSGeneratedOutput>().owner!=t)throw new InvalidOperationException("生成节点归属不匹配，已停止操作。");
+            if(old&&!old.GetComponent<STSGeneratedOutput>()&&!IsLegacy(old))throw new InvalidOperationException("同名节点不属于本插件，已停止。");
+            if(old&&old.GetComponent<STSGeneratedOutput>()&&old.GetComponent<STSGeneratedOutput>().owner!=t)throw new InvalidOperationException("生成节点归属不匹配。");
             staged=new GameObject("STS_Building"){hideFlags=HideFlags.HideInHierarchy};staged.transform.SetParent(t.transform,false);
-            var marker=staged.AddComponent<STSGeneratedOutput>();marker.owner=t;
+            var marker=staged.AddComponent<STSGeneratedOutput>();marker.owner=t;marker.leafCardCount=layout.leaves.Count;marker.flowerCardCount=layout.flowers.Count;
+            marker.alphaSurfaceVerified=layout.leafMask.verified&&layout.bloomMask.verified;
             var lods=new List<LOD>();int levels=t.generateLOD?3:1;
             for(int lod=0;lod<levels;lod++)
             {
-                var context=new STSOrganContext(t,lod);context.Build();
-                var level=new GameObject("LOD"+lod);level.transform.SetParent(staged.transform,false);
-                AddMesh(level.transform,"枝干 / Bark",context.bark,t.barkMaterial,marker,lod);
-                AddMesh(level.transform,"叶片 / Leaves",context.leaves,t.leafMaterial,marker,lod);
-                AddMesh(level.transform,"花瓣苞片 / Flowers",context.flowers,t.flowerMaterial,marker,lod);
-                AddMesh(level.transform,"花蕊真花 / Centers",context.centers,t.flowerCenterMaterial,marker,lod);
-                AddMesh(level.transform,"果实 / Fruit",context.fruit,t.fruitMaterial,marker,lod);
-                foreach(var a in context.prefabFlowers)
+                var bark=new STSMeshData();
+                foreach(var b in t.branches)
                 {
-                    GameObject instance=PrefabUtility.IsPartOfPrefabAsset(t.flowerPrefab)?(GameObject)PrefabUtility.InstantiatePrefab(t.flowerPrefab):UnityEngine.Object.Instantiate(t.flowerPrefab);
-                    if(!instance)continue;instance.transform.SetParent(level.transform,false);STSFrame f=context.Frame(a);
-                    instance.transform.localPosition=f.p;instance.transform.localRotation=Quaternion.FromToRotation(Vector3.up,context.FlowerNormal(f))*Quaternion.AngleAxis(a.rotation,Vector3.up);
-                    instance.transform.localScale=t.flowerPrefab.transform.localScale*a.scale;
+                    int depth=layout.Depth(b);if(b.isFrond||depth>2||(lod==2&&depth>1))continue;
+                    var pts=layout.paths[b.id];var sample=new List<Vector3>();int segments=b.isTrunk?Mathf.Max(4,7-lod):Mathf.Max(2,4-depth-lod);
+                    if(b.isTrunk)segments+=Mathf.CeilToInt(Mathf.Clamp(t.trunkTwist,0,StylizedTreeAuthoring.MaxTrunkTwist)*(17-lod*4));
+                    for(int k=0;k<=segments;k++)sample.Add(STSPath.Evaluate(pts,k/(float)segments).p);
+                    int sides=b.isTrunk?Mathf.Max(5,t.radialSides-lod):Mathf.Max(3,5-depth-lod);
+                    bark.Tube(sample,b.radius,sides,t.barkColor?Color.white:t.barkTint,u=>b.isTrunk?Mathf.Max(.02f,t.radiusProfile.Evaluate(u)):Mathf.Lerp(1,t.branchTipRatio,u));
                 }
+                var leaves=new STSMeshData();var keep=layout.LeafSet(lod);foreach(int index in keep)STSCardLayout.Append(leaves,layout.leaves[index]);
+                var twigs=new STSMeshData();if(t.twigCards.color)for(int k=0;k<layout.twigs.Count;k++)if(lod==0||k%(lod+1)==0)STSCardLayout.Append(twigs,layout.twigs[k]);
+                var blooms=new STSMeshData();if(t.bloomCards.color)for(int k=0;k<layout.flowers.Count;k++)if(STSCardLayout.KeepFlower(k,lod))STSCardLayout.Append(blooms,layout.flowers[k]);
+                var fruit=new STSMeshData();for(int k=0;k<layout.fruit.Count;k++)STSCardLayout.Append(fruit,layout.fruit[k]);
+                var level=new GameObject("LOD"+lod);level.transform.SetParent(staged.transform,false);
+                AddMesh(level.transform,"枝干 / Bark",bark,t.barkMaterial,marker,lod);
+                AddMesh(level.transform,"叶簇面片 / Leaf Cards",leaves,t.leafMaterial,marker,lod);
+                AddMesh(level.transform,"细枝面片 / Twig Cards",twigs,t.flowerCenterMaterial,marker,lod);
+                AddMesh(level.transform,"表面花簇 / Bloom Cards",blooms,t.flowerMaterial,marker,lod);
+                AddMesh(level.transform,"果实面片 / Fruit Cards",fruit,t.fruitMaterial,marker,lod);
                 lods.Add(new LOD(lod==0?.55f:lod==1?.22f:.025f,level.GetComponentsInChildren<Renderer>(true)));
             }
             if(t.generateLOD){var group=staged.AddComponent<LODGroup>();group.SetLODs(lods.ToArray());group.RecalculateBounds();}
-            if(t.addTrunkCollider)
-            {
-                var collider=staged.AddComponent<CapsuleCollider>();collider.center=Vector3.up*t.height*.5f;collider.height=t.height;collider.radius=t.trunkRadius;collider.direction=1;
-            }
-            foreach(Transform node in staged.GetComponentsInChildren<Transform>(true))marker.ownedObjects.Add(node.gameObject);
-            marker.complete=true;
-            // Commit only after every level succeeds. Failure leaves the previous output intact.
-            if(old)Release(old.gameObject);
-            staged.name=RootName;staged.hideFlags=HideFlags.None;staged=null;
+            if(t.addTrunkCollider){var c=staged.AddComponent<CapsuleCollider>();c.center=Vector3.up*t.height*.5f;c.height=t.height;c.radius=t.trunkRadius;c.direction=1;}
+            foreach(Transform node in staged.GetComponentsInChildren<Transform>(true))marker.ownedObjects.Add(node.gameObject);marker.complete=true;
+            if(old)Release(old.gameObject);staged.name=RootName;staged.hideFlags=HideFlags.None;staged=null;
             EditorUtility.SetDirty(t);if(t.gameObject.scene.IsValid())EditorSceneManager.MarkSceneDirty(t.gameObject.scene);
             BuiltState[t.GetInstanceID()]=JsonUtility.ToJson(t);SceneView.RepaintAll();return true;
         }
-        catch(Exception ex){if(staged)Release(staged);Debug.LogError("[植物工坊] "+ex.Message,t);return false;}
+        catch(Exception ex){if(staged)Release(staged);Debug.LogError("[面片植物工坊] "+ex.Message,t);return false;}
     }
     static void AddMesh(Transform parent,string name,STSMeshData data,Material mat,STSGeneratedOutput marker,int lod)
     {
-        if(data.v.Count>1000000)throw new InvalidOperationException("单部位超过一百万顶点，请降低数量或花瓣分段。");
+        if(data.v.Count>1000000)throw new InvalidOperationException("单部位超过一百万顶点，请降低面片密度。");
         Mesh mesh=data.ToMesh("STS_"+parent.name+"_"+name.Split(' ')[0]);if(!mesh)return;
         marker.ownedMeshes.Add(mesh);var go=new GameObject(name);go.transform.SetParent(parent,false);
         go.AddComponent<MeshFilter>().sharedMesh=mesh;var renderer=go.AddComponent<MeshRenderer>();renderer.sharedMaterial=mat;
-        // Default shader uses an art-directed light. Custom Lit/FlatKit materials may cast/receive real shadows.
+        // URP card shader uses alpha-tested, double-sided shadows.
         renderer.shadowCastingMode=ShadowCastingMode.On;
-        if(lod==0){marker.highDetailTriangles+=data.TriangleCount;marker.highDetailVertices+=data.v.Count;}
+        if(lod==0)
+        {
+            marker.highDetailTriangles+=data.TriangleCount;marker.highDetailVertices+=data.v.Count;
+            foreach(Vector3 p in data.v)
+            {
+                if(!marker.hasBounds){marker.localMinimum=marker.localMaximum=p;marker.hasBounds=true;}
+                marker.localMinimum=new Vector3(Mathf.Min(marker.localMinimum.x,p.x),Mathf.Min(marker.localMinimum.y,p.y),Mathf.Min(marker.localMinimum.z,p.z));
+                marker.localMaximum=new Vector3(Mathf.Max(marker.localMaximum.x,p.x),Mathf.Max(marker.localMaximum.y,p.y),Mathf.Max(marker.localMaximum.z,p.z));
+            }
+            marker.localModelHeight=marker.localMaximum.y-marker.localMinimum.y;marker.localModelWidth=marker.localMaximum.x-marker.localMinimum.x;
+        }
     }
     static bool IsLegacy(Transform root)
     {
