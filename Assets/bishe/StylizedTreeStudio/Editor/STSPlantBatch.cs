@@ -44,6 +44,7 @@ internal static class STSPlantBatch
     public static GameObject Generate(StylizedTreeAuthoring source,int count,float spacing,float variation,int? fixedSeed=null)
     {
         if(!source||EditorUtility.IsPersistent(source)||EditorApplication.isPlayingOrWillChangePlaymode)return null;
+        if(!STSPresets.IsSupported(source.species)){Debug.LogWarning("该旧物种已移除，未生成树群。");return null;}
         if(!STSPath.Finite(spacing)||spacing<=0||!STSPath.Finite(variation)){Debug.LogError("[植物工坊] 树群间距须为有效正数，造型差异须为有效数值。");return null;}
         count=Mathf.Clamp(count,1,100);variation=Mathf.Clamp01(variation);
         int batchSeed=fixedSeed??STSRandom.Hash(source.seed,Guid.NewGuid().GetHashCode());

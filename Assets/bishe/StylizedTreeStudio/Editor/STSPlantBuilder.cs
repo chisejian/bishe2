@@ -94,6 +94,7 @@ internal static class STSPlantBuilder
     public static bool Build(StylizedTreeAuthoring t,STSAlphaMask testLeaves=null,STSAlphaMask testBlooms=null)
     {
         if(!t||EditorUtility.IsPersistent(t)||EditorApplication.isPlayingOrWillChangePlaymode)return false;
+        if(!STSPresets.IsSupported(t.species)){Debug.LogWarning("[植物工坊] 旧物种已从本版移除，已有模型保留。",t);return false;}
         GameObject staged=null;
         try
         {

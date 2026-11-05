@@ -8,10 +8,11 @@ Material:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_Name: GAFA_Ill_Sky
-  m_Shader: {fileID: 4800000, guid: a58b322a101339444b2ec4f46a1b6de6, type: 3}
-  m_Parent: {fileID: 0}
+  m_Shader: {fileID: 4800000, guid: ce09790fb3b23df49a7d331aa7c809fd, type: 3}
+  m_Parent: {fileID: 2100000, guid: 2dd650f89a2dbb74882e22ab9e469acd, type: 2}
   m_ModifiedSerializedProperties: 0
-  m_ValidKeywords: []
+  m_ValidKeywords:
+  - _KIND_CONCRETE
   m_InvalidKeywords: []
   m_LightmapFlags: 4
   m_EnableInstancingVariants: 0
@@ -22,18 +23,17 @@ Material:
   m_LockedProperties: 
   m_SavedProperties:
     serializedVersion: 3
-    m_TexEnvs:
-    - _NoiseTex:
-        m_Texture: {fileID: 2800000, guid: 0e1afaed5b8ba5f4bb1abd318e7da33e, type: 3}
-        m_Scale: {x: 1, y: 1}
-        m_Offset: {x: 0, y: 0}
+    m_TexEnvs: []
     m_Ints: []
     m_Floats:
-    - _CloudSpeed: 1
+    - _InkId: 1
+    - _Kind: 0
+    - _Seed: 0
     m_Colors:
-    - _CloudShade: {r: 0.76899993, g: 0.8, b: 0.831, a: 1}
-    - _Horizon: {r: 0.867, g: 0.906, b: 0.878, a: 1}
-    - _Mid: {r: 0.6119999, g: 0.76899993, b: 0.863, a: 1}
-    - _Zenith: {r: 0.43499997, g: 0.639, b: 0.8, a: 1}
+    - _BaseColor: {r: 0.76899993, g: 0.741, b: 0.678, a: 1}
+    - _GroundAmbient: {r: 0.63399994, g: 0.61, b: 0.5659999, a: 1}
+    - _MossColor: {r: 0.561, g: 0.6119999, b: 0.35299996, a: 1}
+    - _SkyAmbient: {r: 0.66499996, g: 0.68, b: 0.715, a: 1}
+    - _TileSize: {r: 1.2, g: 0.6, b: 0, a: 0}
   m_BuildTextureStacks: []
   m_AllowLocking: 1

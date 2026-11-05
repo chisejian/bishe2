@@ -16,10 +16,10 @@ public class StylizedTreeBranch
 }
 
 public enum STSFlowerMode { ProceduralPetals, TextureCards, Prefab }
-public enum STSPlantSpecies { Generic, CrepeMyrtle, Hibiscus, WhiteChampaca, RoyalPalm, PassionFruit, Pomelo, ClimbingFern, Plumeria, Bougainvillea }
+public enum STSPlantSpecies { Generic, CrepeMyrtle, Hibiscus, WhiteChampaca, RoyalPalm, PassionFruit, Pomelo, ClimbingFern, Plumeria }
 public enum STSGrowthForm { Tree, Shrub, Palm, Vine, ClimbingFern }
 public enum STSLeafShape { Oval, Lanceolate, ThreeLobed, Serrated, Feather, Fern }
-public enum STSFlowerShape { Generic, CrepeMyrtle, Hibiscus, Champaca, PassionFlower, Citrus, Plumeria, Bougainvillea }
+public enum STSFlowerShape { Generic, CrepeMyrtle, Hibiscus, Champaca, PassionFlower, Citrus, Plumeria }
 public enum STSFlowerGrouping { Single, Panicle, TipCluster }
 public enum STSFacing { Up, Outward, AlongBranch, Down }
 public enum STSVineLayout { FreeCurve, Climb, WrapColumn, Trellis, Hanging }

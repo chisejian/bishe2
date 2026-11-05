@@ -3,9 +3,14 @@ using UnityEngine;
 
 internal static class STSPresets
 {
-    public static readonly string[] Names = {"通用植物 / Generic", "大花紫薇 / Crepe Myrtle", "青叶朱槿（扶桑） / Hibiscus", "白兰 / White Champaca", "王棕 / Royal Palm", "百香果 / Passion Fruit", "柚子 / Pomelo", "海金沙 / Climbing Fern", "鸡蛋花 / Plumeria", "三角梅 / Bougainvillea"};
+    public static readonly string[] Names = {"通用植物 / Generic", "大花紫薇 / Crepe Myrtle", "青叶朱槿（扶桑） / Hibiscus", "白兰 / White Champaca", "王棕 / Royal Palm", "百香果 / Passion Fruit", "柚子 / Pomelo", "海金沙 / Climbing Fern", "鸡蛋花 / Plumeria"};
+    public static bool IsSupported(STSPlantSpecies species)
+    {int value=(int)species;return value>=0&&value<Names.Length;}
+    public static string DisplayName(STSPlantSpecies species)
+    {return IsSupported(species)?Names[(int)species]:"已移除的旧物种 / Removed Legacy Species";}
     public static void Apply(StylizedTreeAuthoring t, STSPlantSpecies species)
     {
+        if(!IsSupported(species))throw new System.ArgumentOutOfRangeException("species","该物种不在当前版本的生成列表中。");
         // Reset parameters using a temporary component. Material choices survive a species switch.
         var leaves=t.leafCards;var twigs=t.twigCards;var blooms=t.bloomCards;var fruits=t.fruitCards;var barkMap=t.barkColor;var barkNormal=t.barkNormal;string materials=t.materialSetId;
         Material bark=t.barkMaterial, leaf=t.leafMaterial, flower=t.flowerMaterial, center=t.flowerCenterMaterial, fruit=t.fruitMaterial;
@@ -60,12 +65,7 @@ internal static class STSPresets
                 t.branchTipRatio=.4f;
                 t.randomFlowers=16;t.flowersPerCluster=5;t.inflorescenceLength=.22f;t.flowerSize=.065f;t.petalWidth=1.05f;t.petalOverlap=.55f;
                 t.petalTwist=22;t.petalThickness=.035f;t.petalCup=.08f;t.flowerTint=new Color(1,.98f,.9f);t.barkTint=new Color(.56f,.54f,.43f);break;
-            case STSPlantSpecies.Bougainvillea:
-                t.growthForm=STSGrowthForm.Vine;t.height=3.4f;t.crownWidth=3.2f;t.trunkRadius=.045f;t.branchCount=9;t.branchLevels=1;
-                t.vineLayout=STSVineLayout.Trellis;t.enableTendrils=false;t.leafSize=.18f;t.leafClusters=140;t.leafWidth=.62f;
-                t.flowerShape=STSFlowerShape.Bougainvillea;t.flowerGrouping=STSFlowerGrouping.TipCluster;t.randomFlowers=30;
-                t.flowersPerCluster=4;t.inflorescenceLength=.2f;t.flowerSize=.065f;t.petalCount=3;t.petalWidth=.9f;t.petalCup=.2f;
-                t.flowerTint=new Color(.94f,.16f,.51f);t.flowerCenterTint=new Color(1,.98f,.82f);break;
+
         }
         if(t.growthForm==STSGrowthForm.Tree||t.growthForm==STSGrowthForm.Palm)
         {

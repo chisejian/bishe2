@@ -13,6 +13,7 @@ internal static class STSDefaultTextures
     public static void Save(StylizedTreeAuthoring tree)
     {
         if(!tree)throw new ArgumentNullException("tree");
+        if(!STSPresets.IsSupported(tree.species))throw new InvalidOperationException("该旧物种已移除，原默认贴图保留。");
         string path=PathFor(tree.species);STSMaterials.EnsureFolders(Folder);
         var asset=AssetDatabase.LoadAssetAtPath<STSDefaultTextureSet>(path);bool create=!asset;
         if(create&&AssetDatabase.LoadMainAssetAtPath(path))throw new InvalidOperationException("默认贴图路径已有其他类型的资源："+path);
@@ -26,6 +27,7 @@ internal static class STSDefaultTextures
     }
     public static bool Apply(StylizedTreeAuthoring tree)
     {
+        if(!STSPresets.IsSupported(tree.species))return false;
         var asset=AssetDatabase.LoadAssetAtPath<STSDefaultTextureSet>(PathFor(tree.species));
         if(!asset||asset.species!=tree.species)return false;
         tree.barkColor=asset.barkColor;tree.barkNormal=asset.barkNormal;tree.barkTint=asset.barkTint;

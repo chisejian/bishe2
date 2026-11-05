@@ -15,8 +15,8 @@ public class StylizedTreeStudioWindow : EditorWindow
     double rebuildAt=-1;
     string status;
     [MenuItem("Tools/风格化植物工坊/Stylized Tree Studio")]
-    public static void Open(){GetWindow<StylizedTreeStudioWindow>("面片植物工坊 V0.5.6");}
-    public static void OpenFor(StylizedTreeAuthoring t){var w=GetWindow<StylizedTreeStudioWindow>("面片植物工坊 V0.5.6");w.tree=t;w.chosen=t.species;}
+    public static void Open(){GetWindow<StylizedTreeStudioWindow>("面片植物工坊 V0.5.10");}
+    public static void OpenFor(StylizedTreeAuthoring t){var w=GetWindow<StylizedTreeStudioWindow>("面片植物工坊 V0.5.10");w.tree=t;w.chosen=STSPresets.IsSupported(t.species)?t.species:STSPlantSpecies.CrepeMyrtle;}
     void OnEnable(){EditorApplication.update+=Tick;}
     void OnDisable(){EditorApplication.update-=Tick;}
     void Tick(){if(rebuildAt<0||EditorApplication.timeSinceStartup<rebuildAt)return;rebuildAt=-1;if(tree)Rebuild();}
@@ -32,23 +32,24 @@ public class StylizedTreeStudioWindow : EditorWindow
     }
     void Create()
     {
-        var go=new GameObject(STSPresets.Names[(int)chosen].Split('/')[0].Trim());Undo.RegisterCreatedObjectUndo(go,"新建面片植物");
+        var go=new GameObject(STSPresets.DisplayName(chosen).Split('/')[0].Trim());Undo.RegisterCreatedObjectUndo(go,"新建面片植物");
         tree=go.AddComponent<StylizedTreeAuthoring>();STSPresets.Apply(tree,chosen);STSDefaultTextures.Apply(tree);batchSpacing=0;Selection.activeGameObject=go;Rebuild();
         if(SceneView.lastActiveSceneView)SceneView.lastActiveSceneView.FrameSelected();
     }
     void OnGUI()
     {
         scroll=EditorGUILayout.BeginScrollView(scroll);
-        EditorGUILayout.LabelField("面片植物工坊 V0.5.6",EditorStyles.boldLabel);
+        EditorGUILayout.LabelField("面片植物工坊 V0.5.10",EditorStyles.boldLabel);
         EditorGUILayout.HelpBox("叶簇拖入一张 RGBA PNG，即自动创建团簇受光材质。花簇继续贴在树冠外层。",MessageType.Info);
         tree=(StylizedTreeAuthoring)EditorGUILayout.ObjectField("当前植物 / Plant",tree,typeof(StylizedTreeAuthoring),true);
+        if(!STSPresets.IsSupported(chosen))chosen=STSPlantSpecies.CrepeMyrtle;
         chosen=(STSPlantSpecies)EditorGUILayout.Popup("物种 / Species",(int)chosen,STSPresets.Names);
         using(new EditorGUI.DisabledScope(EditorApplication.isPlayingOrWillChangePlaymode))
         {
             using(new EditorGUILayout.HorizontalScope())
             {
                 if(GUILayout.Button("新建植物",GUILayout.Height(28)))Create();
-                if(GUILayout.Button("使用当前选中植物")){tree=Selection.activeGameObject?Selection.activeGameObject.GetComponentInParent<StylizedTreeAuthoring>():null;if(tree)chosen=tree.species;}
+                if(GUILayout.Button("使用当前选中植物")){tree=Selection.activeGameObject?Selection.activeGameObject.GetComponentInParent<StylizedTreeAuthoring>():null;if(tree&&STSPresets.IsSupported(tree.species))chosen=tree.species;}
             }
             if(tree)PlantGUI();
         }
@@ -56,6 +57,8 @@ public class StylizedTreeStudioWindow : EditorWindow
     }
     void PlantGUI()
     {
+        if(!STSPresets.IsSupported(tree.species))
+        {EditorGUILayout.HelpBox("当前是已移除物种的旧对象，已有模型保留。请新建列表中的其他植物。",MessageType.Info);return;}
         if(tree.dataVersion<5)EditorGUILayout.HelpBox("旧植物请先应用 V0.5 默认造型。旧数据保留在组件中，原有手工花叶不参与本版生成。",MessageType.Info);
         if(GUILayout.Button(tree.dataVersion<5?"升级为 V0.5 面片造型（可撤销）":"应用所选物种默认造型（可撤销）"))
         {Record("应用面片植物预设");STSPresets.Apply(tree,chosen);Rebuild();}
@@ -152,7 +155,7 @@ public class StylizedTreeStudioWindow : EditorWindow
         {
             if(GUILayout.Button("保存当前参数和贴图为预设"))STSPlantFiles.SavePreset(tree);
             recipe=(STSPlantPreset)EditorGUILayout.ObjectField("预设 / Preset",recipe,typeof(STSPlantPreset),false);
-            using(new EditorGUI.DisabledScope(!recipe))if(GUILayout.Button("载入预设")){STSPlantFiles.LoadPreset(tree,recipe);chosen=tree.species;}
+            using(new EditorGUI.DisabledScope(!recipe))if(GUILayout.Button("载入预设")){STSPlantFiles.LoadPreset(tree,recipe);if(STSPresets.IsSupported(tree.species))chosen=tree.species;}
             if(GUILayout.Button("保存可编辑 Prefab"))STSPlantFiles.Bake(tree,true);
         }
     }
@@ -163,9 +166,10 @@ internal class STSAuthoringInspector : Editor
 {
     public override void OnInspectorGUI()
     {
-        var t=(StylizedTreeAuthoring)target;EditorGUILayout.LabelField("面片植物工坊 V0.5.6",EditorStyles.boldLabel);
+        var t=(StylizedTreeAuthoring)target;EditorGUILayout.LabelField("面片植物工坊 V0.5.10",EditorStyles.boldLabel);
         EditorGUILayout.HelpBox("在工坊窗口拖入叶簇和花簇 PNG，再调整密度。",MessageType.Info);
         if(GUILayout.Button("打开植物工坊"))StylizedTreeStudioWindow.OpenFor(t);
+        if(!STSPresets.IsSupported(t.species)){EditorGUILayout.HelpBox("该旧物种已移除，已有模型保留。",MessageType.Info);return;}
         if(GUILayout.Button("刷新当前植物"))STSPlantBuilder.Build(t);
     }
 }

@@ -211,7 +211,7 @@ internal class STSCardLayout
     {
         if(!tree.enableFlowers||leaves.Count==0||tree.growthForm==STSGrowthForm.ClimbingFern||tree.growthForm==STSGrowthForm.Palm)return;
         if(!leafMask.HasVisible(tree.leafCards.uv,tree.leafCards.cutoff)||!bloomMask.HasVisible(tree.bloomCards.uv,tree.bloomCards.cutoff))return;
-        int budget=tree.species==STSPlantSpecies.CrepeMyrtle?850:tree.species==STSPlantSpecies.Bougainvillea?180:tree.growthForm==STSGrowthForm.Tree?550:tree.growthForm==STSGrowthForm.Shrub?180:95;
+        int budget=tree.species==STSPlantSpecies.CrepeMyrtle?850:tree.growthForm==STSGrowthForm.Tree?550:tree.growthForm==STSGrowthForm.Shrub?180:95;
         int wanted=Mathf.RoundToInt(tree.flowerAmount*budget);
         int topLimit=Mathf.RoundToInt(wanted*.22f*Mathf.Clamp01(tree.topBloomDensity)),onTop=0;
         float topY=0;foreach(var b in tree.branches)if(b.isTrunk)topY=Mathf.Max(topY,b.points[b.points.Count-1].y);

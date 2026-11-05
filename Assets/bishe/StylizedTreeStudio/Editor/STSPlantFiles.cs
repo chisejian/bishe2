@@ -7,8 +7,15 @@ using UnityEngine;
 
 internal static class STSPlantFiles
 {
+    [Serializable] sealed class RecipeHeader {public int species=0;}
+    static bool SupportedRecipe(string parameters)
+    {
+        try{var header=JsonUtility.FromJson<RecipeHeader>(parameters);return header!=null&&STSPresets.IsSupported((STSPlantSpecies)header.species);}
+        catch(ArgumentException){return false;}
+    }
     public static void SavePreset(StylizedTreeAuthoring t)
     {
+        if(!STSPresets.IsSupported(t.species)){Debug.LogWarning("该旧物种已移除，已有模型保留。");return;}
         string path=EditorUtility.SaveFilePanelInProject("保存自定义植物预设","我的植物预设","asset","保存树形参数与 PNG 贴图引用。");
         if(string.IsNullOrEmpty(path))return;
         var asset=AssetDatabase.LoadAssetAtPath<STSPlantPreset>(path);
@@ -18,13 +25,14 @@ internal static class STSPlantFiles
         asset.centers=t.flowerCenterMaterial;asset.fruit=t.fruitMaterial;asset.flowerTexture=t.flowerTexture;asset.flowerPrefab=t.flowerPrefab;
         asset.barkColor=t.barkColor;asset.barkNormal=t.barkNormal;
         asset.cardTextures=new[]{t.leafCards.color,t.leafCards.normal,t.twigCards.color,t.twigCards.normal,t.bloomCards.color,t.bloomCards.normal,t.fruitCards.color,t.fruitCards.normal};
-        asset.pluginVersion="0.5.6";
+        asset.pluginVersion="0.5.10";
         if(isNew)AssetDatabase.CreateAsset(asset,path);else EditorUtility.SetDirty(asset);
         AssetDatabase.SaveAssets();EditorGUIUtility.PingObject(asset);
     }
     public static void LoadPreset(StylizedTreeAuthoring t,STSPlantPreset asset)
     {
         if(!asset||string.IsNullOrEmpty(asset.parameters))return;
+        if(!SupportedRecipe(asset.parameters)){Debug.LogWarning("该预设的物种已移除或数据无效，未改动当前植物。");return;}
         Undo.RecordObject(t,"载入植物预设");string materialId=t.materialSetId;
         // Older JSON has neither field: do not inherit another plant's values.
         t.trunkTwist=0;t.leafScale=1;

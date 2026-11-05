@@ -39,7 +39,7 @@ internal static class STSQuickRecipe
         {
             t.canopyMode=STSCanopyMode.IndividualLeaves;t.branchCount=Mathf.RoundToInt(Mathf.Lerp(5,12,branches));
             t.leafClusters=Mathf.RoundToInt(Mathf.Lerp(t.growthForm==STSGrowthForm.ClimbingFern?14:90,t.growthForm==STSGrowthForm.ClimbingFern?26:240,density));
-            t.randomFlowers=Mathf.RoundToInt(t.flowerAmount*(t.species==STSPlantSpecies.Bougainvillea?55:25));
+            t.randomFlowers=Mathf.RoundToInt(t.flowerAmount*25);
         }
         t.enableFlowers=t.flowerAmount>0&&t.growthForm!=STSGrowthForm.Palm&&t.growthForm!=STSGrowthForm.ClimbingFern;
         

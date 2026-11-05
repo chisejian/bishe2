@@ -24,7 +24,7 @@ internal static class STSSelfTests
     {
         var leaf=Pattern(false);var bloom=Pattern(true);int total=0;
         CheckTransparentHole(leaf);CheckTube();CheckLeafDensity(leaf,bloom);
-        for(int species=1;species<=9;species++)
+        for(int species=1;species<STSPresets.Names.Length;species++)
         {
             var go=new GameObject("STS_CardCheck"){hideFlags=HideFlags.HideAndDontSave};
             try
@@ -65,7 +65,7 @@ internal static class STSSelfTests
             }
             finally{UnityEngine.Object.DestroyImmediate(go);}
         }
-        Debug.Log("[面片检查] 通过：九物种 × 三级 LOD；"+total+" 簇花的 Alpha 表面、图案重心、离面间距、风摆、顶部覆盖和承托检查。仍需在 Unity 中查看实际材质效果。");
+        Debug.Log("[面片检查] 通过：八物种 × 三级 LOD；"+total+" 簇花的 Alpha 表面、图案重心、离面间距、风摆、顶部覆盖和承托检查。仍需在 Unity 中查看实际材质效果。");
     }
     static void CheckLeafDensity(STSAlphaMask leaf,STSAlphaMask bloom)
     {

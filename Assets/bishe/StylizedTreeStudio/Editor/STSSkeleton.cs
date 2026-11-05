@@ -39,6 +39,7 @@ internal static class STSSkeleton
     }
     public static void Generate(StylizedTreeAuthoring t)
     {
+        if(!STSPresets.IsSupported(t.species))throw new InvalidOperationException("旧物种已移除，保留原有枝条数据。");
         t.branches.Clear();t.nextBranchId=1;
         if(t.growthForm==STSGrowthForm.Vine||t.growthForm==STSGrowthForm.ClimbingFern) Vine(t);
         else if(t.growthForm==STSGrowthForm.Palm) Palm(t);
