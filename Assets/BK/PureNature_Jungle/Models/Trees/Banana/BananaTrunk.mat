@@ -181,7 +181,7 @@ Material:
     - _WindBurstsScale: 1
     - _WindBurstsSpeed: 50
     - _WindDebugView: 0
-    - _WindMultiplier: 0.3
+    - _WindMultiplier: 0.05
     - _WindMultiplier1: 1
     - _WindPosContrast: 6.5
     - _WindPosition: 6

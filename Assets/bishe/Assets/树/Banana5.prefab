@@ -75,7 +75,7 @@ PrefabInstance:
     - target: {fileID: -3790472283937681298, guid: f3d53f443936436f96f72e9a3987d0fb, type: 3}
       propertyPath: 'm_Materials.Array.data[0]'
       value: 
-      objectReference: {fileID: 2100000, guid: 03781e7adda947c78db485eff654244f, type: 2}
+      objectReference: {fileID: 2100000, guid: 0928f71054562a2458c504450b26cd1c, type: 2}
     - target: {fileID: -3790472283937681298, guid: f3d53f443936436f96f72e9a3987d0fb, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
       value: 
@@ -91,7 +91,7 @@ PrefabInstance:
     - target: {fileID: -2856880968519451040, guid: f3d53f443936436f96f72e9a3987d0fb, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
       value: 
-      objectReference: {fileID: 2100000, guid: 03781e7adda947c78db485eff654244f, type: 2}
+      objectReference: {fileID: 2100000, guid: 0928f71054562a2458c504450b26cd1c, type: 2}
     - target: {fileID: 919132149155446097, guid: f3d53f443936436f96f72e9a3987d0fb, type: 3}
       propertyPath: m_Name
       value: Banana5
@@ -131,7 +131,7 @@ PrefabInstance:
     - target: {fileID: 7818136257508960749, guid: f3d53f443936436f96f72e9a3987d0fb, type: 3}
       propertyPath: 'm_Materials.Array.data[1]'
       value: 
-      objectReference: {fileID: 2100000, guid: 03781e7adda947c78db485eff654244f, type: 2}
+      objectReference: {fileID: 2100000, guid: 0928f71054562a2458c504450b26cd1c, type: 2}
     m_RemovedComponents: []
     m_RemovedGameObjects: []
     m_AddedGameObjects: []

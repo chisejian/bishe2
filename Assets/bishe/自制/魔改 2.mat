@@ -7,7 +7,7 @@ Material:
   m_CorrespondingSourceObject: {fileID: 0}
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
-  m_Name: "\u9B54\u6539"
+  m_Name: "\u9B54\u6539 2"
   m_Shader: {fileID: 4800000, guid: 43c46d1c169b528ea042d3365a541564, type: 3}
   m_Parent: {fileID: 0}
   m_ModifiedSerializedProperties: 0
@@ -59,7 +59,7 @@ Material:
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _Diffuse:
-        m_Texture: {fileID: 2800000, guid: 67123279afe898047b838ed20c627631, type: 3}
+        m_Texture: {fileID: 2800000, guid: be03d4901d357c44e80cfd767fea9b1f, type: 3}
         m_Scale: {x: 1, y: 1}
         m_Offset: {x: 0, y: 0}
     - _DitherNoise:
@@ -234,9 +234,9 @@ Material:
     - _BranchesColor: {r: 0, g: 0, b: 0, a: 0}
     - _Color: {r: 1, g: 1, b: 1, a: 1}
     - _Color0: {r: 1, g: 1, b: 1, a: 0}
-    - _ColorVariation: {r: 0.6509434, g: 0.4759256, b: 0.6465321, a: 1}
+    - _ColorVariation: {r: 0.6886792, g: 0.23713954, b: 0.6786451, a: 1}
     - _EmissionColor: {r: 0, g: 0, b: 0, a: 1}
-    - _GradientColor: {r: 0.8584906, g: 0.5547793, b: 0.7835875, a: 1}
+    - _GradientColor: {r: 0.754717, g: 0.08187969, b: 0.5908206, a: 1}
     - _MainColor: {r: 0.9391628, g: 0.759434, b: 1, a: 1}
     - _ScatteringColor: {r: 0.56218994, g: 1, b: 0, a: 0}
     - _SpecularColor: {r: 0.39215687, g: 0.39215687, b: 0.39215687, a: 1}
