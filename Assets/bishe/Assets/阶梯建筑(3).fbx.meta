@@ -1,0 +1,345 @@
+fileFormatVersion: 2
+guid: 8d407883877e1ab48b463337e78a9864
+ModelImporter:
+  serializedVersion: 24200
+  internalIDToNameTable: []
+  externalObjects:
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Exposed_Rusted_Rebar
+    second: {fileID: 2100000, guid: 8970005fb72b54c459ecb525a67dd76d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Glass_BlueGray_Transparent
+    second: {fileID: 2100000, guid: 8f902cd1fb1003141a959f43cf9c4b98, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Unity_Baked_Viewport_Colors
+    second: {fileID: 2100000, guid: e06564c763ce77d449bd37c045784eb6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Unity_Baked_Viewport_Colors.001
+    second: {fileID: 2100000, guid: 44c4f874ef4b65d49b1a5f10d5d243d3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Unity_Baked_Viewport_Colors.002
+    second: {fileID: 2100000, guid: a9925af95b365b14680d04de8afd7378, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Unity_Baked_Viewport_Colors.003
+    second: {fileID: 2100000, guid: 43b9960a29d533b4bbbd3e8115fc75de, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Unity_Baked_Viewport_Colors.004
+    second: {fileID: 2100000, guid: d52876ab3a71b994ca51cde956c99d54, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Unity_Baked_Viewport_Colors.006
+    second: {fileID: 2100000, guid: 659426430c4cc6747b14c9e1d2ce97fc, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Unity_Baked_Viewport_Colors.007
+    second: {fileID: 2100000, guid: ed72c36dae51be1439ed5da868d2693e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Unity_Baked_Viewport_Colors.008
+    second: {fileID: 2100000, guid: fda52fe6100e2c14eb5befb59aa0dd4d, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Unity_Baked_Viewport_Colors.009
+    second: {fileID: 2100000, guid: bbe77021385145641978eba22d964208, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Unity_Baked_Viewport_Colors.010
+    second: {fileID: 2100000, guid: 0d5b81550186ea94d92856a6a307fd45, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Unity_Baked_Viewport_Colors.011
+    second: {fileID: 2100000, guid: 32bd8e60e8eeaed4480f6fa03557cb17, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Unity_Baked_Viewport_Colors.012
+    second: {fileID: 2100000, guid: 9854e01c32bebce47a6af3e5de1e1bde, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Unity_Baked_Viewport_Colors.013
+    second: {fileID: 2100000, guid: a99c9fe3ece019640a63be7b427ad5c5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Unity_Baked_Viewport_Colors.014
+    second: {fileID: 2100000, guid: b9d51aed8c0f88443bd6c20ac0e57e5e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Unity_Baked_Viewport_Colors.015
+    second: {fileID: 2100000, guid: 5aa9da320d54bdc42b39c07ce4eb08de, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Unity_Baked_Viewport_Colors.016
+    second: {fileID: 2100000, guid: c0ff96dcf2b6bdf4fbafb3ad14b21104, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Unity_Baked_Viewport_Colors.017
+    second: {fileID: 2100000, guid: 73db8c44a26ec1647b281180c9ce2ead, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Unity_Baked_Viewport_Colors.018
+    second: {fileID: 2100000, guid: 77d7e6686c366fb48ad093fdf5f62d45, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Unity_Baked_Viewport_Colors.019
+    second: {fileID: 2100000, guid: 12b07cbd098f72a42b9faf8e5b3788d7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Unity_Baked_Viewport_Colors.020
+    second: {fileID: 2100000, guid: 7ea728ab6e668b5499eb5cf3005caf83, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Unity_Baked_Viewport_Colors.021
+    second: {fileID: 2100000, guid: 19ebe9718f0f9f54fad54bf6e987e3c6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Unity_Baked_Viewport_Colors.022
+    second: {fileID: 2100000, guid: 6f1b82bc6bbb73b4da9681a9382666ef, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Unity_Baked_Viewport_Colors.023
+    second: {fileID: 2100000, guid: 89b2c2d166e96cc42940778846072ea7, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Unity_Baked_Viewport_Colors.024
+    second: {fileID: 2100000, guid: 7c445ed8db081fb42b406e94baafd7ec, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Unity_Baked_Viewport_Colors.025
+    second: {fileID: 2100000, guid: 94358f3ab2e7ab64289ffead4122d545, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Unity_Baked_Viewport_Colors.026
+    second: {fileID: 2100000, guid: 5d5b6ad16c42ccf4c9bd4ee0ea8b9e99, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Unity_Baked_Viewport_Colors.027
+    second: {fileID: 2100000, guid: a6a10b85d11219c47ab883dc6f395f8a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Unity_Baked_Viewport_Colors.028
+    second: {fileID: 2100000, guid: 26049b16e4ea9974a807fb41b320ae2e, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Unity_Baked_Viewport_Colors.029
+    second: {fileID: 2100000, guid: 704790e4de162f54d908c46ab0a66fe6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Unity_Baked_Viewport_Colors.030
+    second: {fileID: 2100000, guid: 923595e06b268b94d9abf83ce89f6f3a, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Unity_Baked_Viewport_Colors.031
+    second: {fileID: 2100000, guid: 806acc9120374d145ad9d5c471e43d26, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Unity_Baked_Viewport_Colors.032
+    second: {fileID: 2100000, guid: ae353798dfa1ea64cb72f24ec94942d8, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Unity_Baked_Viewport_Colors.033
+    second: {fileID: 2100000, guid: 69e5ce3ac1cdf8348bedb8f9ea7768d3, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Unity_Baked_Viewport_Colors.034
+    second: {fileID: 2100000, guid: d3a94bba09a2cb6498ef64ce12948017, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Unity_Baked_Viewport_Colors.035
+    second: {fileID: 2100000, guid: 86166e895681ba34c819ab47084d0a91, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Unity_Baked_Viewport_Colors.036
+    second: {fileID: 2100000, guid: f435fcbff154a314ea1573ff0aac2354, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Unity_Baked_Viewport_Colors.037
+    second: {fileID: 2100000, guid: 3995e50411994e246ad0eb61d047cfa5, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Unity_Baked_Viewport_Colors.038
+    second: {fileID: 2100000, guid: f5b9ab9b8d204624182e44cf5d586998, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Unity_Baked_Viewport_Colors.040
+    second: {fileID: 2100000, guid: 29e11b7cce8966c4fb6ffe36c986f556, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Unity_Baked_Viewport_Colors.041
+    second: {fileID: 2100000, guid: da47c30b316f4f74680e2e8d9b680cd6, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: Unity_Baked_Viewport_Colors.042
+    second: {fileID: 2100000, guid: 559cc120abd35374b8ff60025c424749, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: "\u5E9F\u589F\xB7\u73BB\u7483\u88C2\u7EB9"
+    second: {fileID: 2100000, guid: fbebc020af81fed4d89d917234092edf, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: "\u5E9F\u589F\xB7\u9508\u8680\u91D1\u5C5E"
+    second: {fileID: 2100000, guid: 4cf15b5801141d549b587622798a9058, type: 2}
+  - first:
+      type: UnityEngine:Material
+      assembly: UnityEngine.CoreModule
+      name: "\u5E9F\u589F\xB7\u9633\u53F0\u6DF1\u88C2\u7F1D"
+    second: {fileID: 2100000, guid: 4527c25a92225d14293dc9aeed2aa3d1, type: 2}
+  - first:
+      type: UnityEngine:Texture2D
+      assembly: UnityEngine.CoreModule
+      name: building_reference_model_viewport_color
+    second: {fileID: 2800000, guid: 610e0a94e9cc2dc438258584d6e42a02, type: 3}
+  materials:
+    materialImportMode: 2
+    materialName: 0
+    materialSearch: 1
+    materialLocation: 1
+  animations:
+    legacyGenerateAnimations: 4
+    bakeSimulation: 0
+    resampleCurves: 1
+    optimizeGameObjects: 0
+    removeConstantScaleCurves: 0
+    motionNodeName: 
+    animationImportErrors: 
+    animationImportWarnings: 
+    animationRetargetingWarnings: 
+    animationDoRetargetingWarnings: 0
+    importAnimatedCustomProperties: 0
+    importConstraints: 0
+    animationCompression: 1
+    animationRotationError: 0.5
+    animationPositionError: 0.5
+    animationScaleError: 0.5
+    animationWrapMode: 0
+    extraExposedTransformPaths: []
+    extraUserProperties: []
+    clipAnimations: []
+    isReadable: 0
+  meshes:
+    lODScreenPercentages: []
+    globalScale: 1
+    meshCompression: 0
+    addColliders: 0
+    useSRGBMaterialColor: 1
+    sortHierarchyByName: 1
+    importPhysicalCameras: 1
+    importVisibility: 1
+    importBlendShapes: 1
+    importCameras: 1
+    importLights: 1
+    nodeNameCollisionStrategy: 1
+    fileIdsGeneration: 2
+    swapUVChannels: 0
+    generateSecondaryUV: 0
+    useFileUnits: 1
+    keepQuads: 0
+    weldVertices: 1
+    bakeAxisConversion: 0
+    preserveHierarchy: 0
+    skinWeightsMode: 0
+    maxBonesPerVertex: 4
+    minBoneWeight: 0.001
+    optimizeBones: 1
+    generateMeshLods: 0
+    meshLodGenerationFlags: 0
+    maximumMeshLod: -1
+    meshOptimizationFlags: -1
+    indexFormat: 0
+    secondaryUVAngleDistortion: 8
+    secondaryUVAreaDistortion: 15.000001
+    secondaryUVHardAngle: 88
+    secondaryUVMarginMethod: 1
+    secondaryUVMinLightmapResolution: 40
+    secondaryUVMinObjectScale: 1
+    secondaryUVPackMargin: 4
+    useFileScale: 1
+    strictVertexDataChecks: 0
+  tangentSpace:
+    normalSmoothAngle: 60
+    normalImportMode: 0
+    tangentImportMode: 3
+    normalCalculationMode: 4
+    legacyComputeAllNormalsFromSmoothingGroupsWhenMeshHasBlendShapes: 0
+    blendShapeNormalImportMode: 1
+    normalSmoothingSource: 0
+  referencedClips: []
+  importAnimation: 1
+  humanDescription:
+    serializedVersion: 3
+    human: []
+    skeleton: []
+    armTwist: 0.5
+    foreArmTwist: 0.5
+    upperLegTwist: 0.5
+    legTwist: 0.5
+    armStretch: 0.05
+    legStretch: 0.05
+    feetSpacing: 0
+    globalScale: 1
+    rootMotionBoneName: 
+    hasTranslationDoF: 0
+    hasExtraRoot: 0
+    skeletonHasParents: 1
+  lastHumanDescriptionAvatarSource: {instanceID: 0}
+  autoGenerateAvatarMappingIfUnspecified: 1
+  animationType: 2
+  humanoidOversampling: 1
+  avatarSetup: 0
+  addHumanoidExtraRootOnlyWhenUsingAvatar: 1
+  importBlendShapeDeformPercent: 1
+  remapMaterialsIfMaterialImportModeIsNone: 0
+  additionalBone: 0
+  userData: 
+  assetBundleName: 
+  assetBundleVariant: 
