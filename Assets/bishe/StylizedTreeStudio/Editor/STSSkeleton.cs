@@ -15,6 +15,10 @@ internal static class STSSkeleton
 {
     public static string Signature(StylizedTreeAuthoring t)
     {
+        if(t.useReferenceTrunk)
+            return string.Join("|", "reference-trunk-v0514", t.referenceTrunk?t.referenceTrunk.revision:"missing",
+                t.height.ToString("R",System.Globalization.CultureInfo.InvariantCulture),t.crownWidth.ToString("R",System.Globalization.CultureInfo.InvariantCulture),
+                t.trunkTwist.ToString("R",System.Globalization.CultureInfo.InvariantCulture),t.referenceBranchStretch.ToString("R",System.Globalization.CultureInfo.InvariantCulture));
         // A stable string avoids culture-dependent float formatting and excludes organ seeds.
         return string.Join("|","trunk-twist-v055",t.height.ToString("R",System.Globalization.CultureInfo.InvariantCulture),t.crownWidth.ToString("R",System.Globalization.CultureInfo.InvariantCulture),
             t.trunkRadius.ToString("R",System.Globalization.CultureInfo.InvariantCulture),t.branchCount,t.branchLevels,t.secondaryBranches,t.baseStemCount,t.seed,
@@ -41,7 +45,8 @@ internal static class STSSkeleton
     {
         if(!STSPresets.IsSupported(t.species))throw new InvalidOperationException("旧物种已移除，保留原有枝条数据。");
         t.branches.Clear();t.nextBranchId=1;
-        if(t.growthForm==STSGrowthForm.Vine||t.growthForm==STSGrowthForm.ClimbingFern) Vine(t);
+        if(t.useReferenceTrunk){STSReferenceGrowth.Migrate(t);STSReferenceGrowth.Generate(t);}
+        else if(t.growthForm==STSGrowthForm.Vine||t.growthForm==STSGrowthForm.ClimbingFern) Vine(t);
         else if(t.growthForm==STSGrowthForm.Palm) Palm(t);
         else Broadleaf(t);
         t.generatedBranches=true;t.dataVersion=Mathf.Max(3,t.dataVersion);t.growthSignature=Signature(t);

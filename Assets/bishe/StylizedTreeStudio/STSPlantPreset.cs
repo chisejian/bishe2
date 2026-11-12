@@ -8,5 +8,6 @@ public class STSPlantPreset : ScriptableObject
     public GameObject flowerPrefab;
     public Texture2D barkColor,barkNormal;
     public Texture2D[] cardTextures;
-    public string pluginVersion = "0.5.10";
+    public STSReferenceTrunk referenceTrunk;
+    public string pluginVersion = "0.5.14";
 }

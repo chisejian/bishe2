@@ -11,6 +11,9 @@ internal static class STSPresets
     public static void Apply(StylizedTreeAuthoring t, STSPlantSpecies species)
     {
         if(!IsSupported(species))throw new System.ArgumentOutOfRangeException("species","该物种不在当前版本的生成列表中。");
+        var reference=t.referenceTrunk;bool useReference=t.useReferenceTrunk;
+        float referenceCrownStart=t.referenceCrownStart,referenceCrownBaseRatio=t.referenceCrownBaseRatio,referenceTwist=t.trunkTwist;int referenceCanopyVersion=t.referenceCanopyVersion;
+        float referenceStretch=t.referenceBranchStretch,referenceOffset=t.referenceCrownOffset;var previousSpecies=t.species;
         // Reset parameters using a temporary component. Material choices survive a species switch.
         var leaves=t.leafCards;var twigs=t.twigCards;var blooms=t.bloomCards;var fruits=t.fruitCards;var barkMap=t.barkColor;var barkNormal=t.barkNormal;string materials=t.materialSetId;
         Material bark=t.barkMaterial, leaf=t.leafMaterial, flower=t.flowerMaterial, center=t.flowerCenterMaterial, fruit=t.fruitMaterial;
@@ -72,6 +75,14 @@ internal static class STSPresets
             t.height=species==STSPlantSpecies.RoyalPalm?26:species==STSPlantSpecies.Pomelo||species==STSPlantSpecies.Plumeria?20:24;
             t.crownWidth=t.height*(t.growthForm==STSGrowthForm.Palm?.4f:species==STSPlantSpecies.WhiteChampaca?.57f:.76f);
             if(t.growthForm==STSGrowthForm.Tree){t.leafTint=new Color(.32f,.49f,.16f);t.leafColorVariation=.12f;}
+        }
+        if(useReference&&reference&&t.growthForm==STSGrowthForm.Tree)
+        {
+            t.useReferenceTrunk=true;t.referenceTrunk=reference;t.referenceCrownStart=referenceCrownStart;t.referenceCrownBaseRatio=referenceCrownBaseRatio;
+            t.referenceCanopyVersion=referenceCanopyVersion;t.trunkTwist=referenceTwist;t.referenceBranchStretch=referenceStretch;t.referenceCrownOffset=referenceOffset;
+            if(species==STSPlantSpecies.Plumeria&&previousSpecies!=species)t.referenceCanopyVersion=2;
+            else if(species!=STSPlantSpecies.Plumeria&&previousSpecies==STSPlantSpecies.Plumeria)
+            {t.referenceCanopyVersion=2;t.referenceCrownBaseRatio=.16f;t.referenceCrownOffset=0;}
         }
         t.useSimpleRecipe=true;STSQuickRecipe.Apply(t);
         STSSkeleton.Generate(t);

@@ -6,14 +6,14 @@ using UnityEngine;
 
 internal static class STSPlantBatch
 {
-    static void CopySource(StylizedTreeAuthoring source,StylizedTreeAuthoring target)
+    internal static void CopySource(StylizedTreeAuthoring source,StylizedTreeAuthoring target)
     {
         EditorUtility.CopySerialized(source,target);
         // Own every mutable authoring list. A new seed must never deform the
         // template plant or another member of the group through shared data.
         target.branches=new List<StylizedTreeBranch>();
         if(source.branches!=null)foreach(var b in source.branches)if(b!=null)
-            target.branches.Add(new StylizedTreeBranch{id=b.id,parentId=b.parentId,parentT=b.parentT,radius=b.radius,isTrunk=b.isTrunk,isFrond=b.isFrond,points=new List<Vector3>(b.points)});
+            target.branches.Add(new StylizedTreeBranch{id=b.id,parentId=b.parentId,parentT=b.parentT,radius=b.radius,isTrunk=b.isTrunk,isFrond=b.isFrond,referenceAddition=b.referenceAddition,points=new List<Vector3>(b.points)});
         target.attachments=new List<STSPlantAttachment>();
         if(source.attachments!=null)foreach(var a in source.attachments)if(a!=null)
             target.attachments.Add(new STSPlantAttachment{kind=a.kind,branchId=a.branchId,t=a.t,offset=a.offset,rotation=a.rotation,scale=a.scale});

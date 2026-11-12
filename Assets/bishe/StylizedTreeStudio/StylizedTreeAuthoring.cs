@@ -13,6 +13,7 @@ public class StylizedTreeBranch
     [Range(0, 1)] public float parentT;
     public bool isTrunk;
     public bool isFrond;
+    [HideInInspector] public bool referenceAddition; // Legacy V0.5.11/12 data only.
 }
 
 public enum STSFlowerMode { ProceduralPetals, TextureCards, Prefab }
@@ -73,6 +74,20 @@ public class StylizedTreeAuthoring : MonoBehaviour
     [Range(0, 1)] public float trunkBend = 0.12f;
     // Additional smooth trunk curvature; zero preserves the existing silhouette.
     [Range(0, MaxTrunkTwist)] public float trunkTwist;
+    [Header("现成主干副本 / Reference Trunk Copy")]
+    public bool useReferenceTrunk;
+    public STSReferenceTrunk referenceTrunk;
+    // Stretch existing upper branches; the lower trunk and root remain pinned.
+    [Range(.5f, 2f)] public float referenceBranchStretch = 1f;
+    // Relative to plant height. Plumeria migrates once to a lower, broad-based crown.
+    [Range(-.3f, .1f)] public float referenceCrownOffset;
+    // Serialized legacy fields stay readable.
+    [HideInInspector] public float referenceBend;
+    [HideInInspector] public float referenceBendDirection;
+    [HideInInspector] public int referenceAddedBranches;
+    [HideInInspector] public float referenceCrownStart = .48f;
+    [HideInInspector] public float referenceCrownBaseRatio = .16f;
+    [HideInInspector] public int referenceCanopyVersion;
     [Range(0.03f, 0.7f)] public float branchTipRatio = 0.18f;
     [Range(3, 12)] public int radialSides = 6;
     public AnimationCurve crownProfile = new AnimationCurve(new Keyframe(0, 0.65f), new Keyframe(0.5f, 1), new Keyframe(1, 0.3f));

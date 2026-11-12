@@ -17,6 +17,9 @@ internal class STSPlacedCard
     public Vector3 shadeCenter,shadeRadii,canopyCenter,canopyRadii;
     public float occlusion=1;
     public int support=-1;
+    public bool referenceLeaf,referenceStructural,referenceScatter;
+    public int referenceParent=-1;
+    public Vector2 referenceOwnContact,referenceParentContact;
     public Vector3 attachment,contact,rayOrigin,rayDirection;
     public STSPlacedCard(Vector3 center,Vector3 normal,Vector3 up,Vector2 size,Rect uv)
     {
@@ -72,6 +75,12 @@ internal class STSCardLayout
     }
     void LeafCards()
     {
+        if(STSReferenceGrowth.Active(tree))
+        {
+            STSReferenceCanopy.Build(tree,leaves,leafMask);
+            for(int i=0;i<leaves.Count;i++)if(leaves[i].crownCap)capLeaves.Add(i);
+            return;
+        }
         if(tree.canopyFullness<=0)return;
         bool large=tree.growthForm==STSGrowthForm.Tree,shrub=tree.growthForm==STSGrowthForm.Shrub;
         int count=Mathf.RoundToInt(Mathf.Lerp(large?650:shrub?250:70,large?1500:shrub?650:280,tree.canopyFullness));
@@ -99,6 +108,7 @@ internal class STSCardLayout
     }
     void CrownCap()
     {
+        if(STSReferenceGrowth.Active(tree))return;
         if(tree.growthForm!=STSGrowthForm.Tree||tree.canopyMode!=STSCanopyMode.LayeredClusters||tree.canopyFullness<=0||!leafMask.HasVisible(tree.leafCards.uv,tree.leafCards.cutoff))return;
         StylizedTreeBranch trunk=null;foreach(var b in tree.branches)if(b.isTrunk&&(trunk==null||b.points[b.points.Count-1].y>trunk.points[trunk.points.Count-1].y))trunk=b;
         if(trunk==null)return;Vector3 top=trunk.points[trunk.points.Count-1];
@@ -154,7 +164,10 @@ internal class STSCardLayout
             var card=leaves[i];if(tree.growthForm==STSGrowthForm.Palm)card.clusterKey=i/3;
             List<STSPlacedCard> list;if(!groups.TryGetValue(card.clusterKey,out list)){list=new List<STSPlacedCard>();groups.Add(card.clusterKey,list);}list.Add(card);
         }
-        Vector3 canopyCenter=new Vector3(0,tree.height*.66f,0),canopyRadii=new Vector3(tree.crownWidth*.55f,tree.height*.36f,tree.crownWidth*.5f);
+        bool reference=STSReferenceGrowth.Active(tree);
+        Vector3 canopyCenter=reference?STSReferenceCanopy.Center(tree):new Vector3(0,tree.height*.66f,0);
+        Vector3 canopyRadii=new Vector3(tree.crownWidth*.55f,reference?(STSReferenceCanopy.Top(tree)-STSReferenceCanopy.Bottom(tree))*.66f:tree.height*.36f,tree.crownWidth*.5f);
+        if(reference){float derivative;float stretch=STSReferenceGrowth.Stretch(tree,canopyCenter.y,out derivative);canopyRadii.x*=stretch;canopyRadii.z*=stretch;}
         foreach(var list in groups.Values)
         {
             Vector3 center=Vector3.zero,min=list[0].center,max=min;float size=0;
@@ -217,6 +230,8 @@ internal class STSCardLayout
         float topY=0;foreach(var b in tree.branches)if(b.isTrunk)topY=Mathf.Max(topY,b.points[b.points.Count-1].y);
         Vector2 centroid=bloomMask.Center(tree.bloomCards.uv,tree.bloomCards.cutoff);
         float size=(tree.growthForm==STSGrowthForm.Tree?tree.crownWidth*.065f:tree.height*.16f)*tree.bloomScale;
+        if(STSReferenceGrowth.Active(tree)&&STSReferenceCanopy.Frustum(tree))
+            wanted-=BranchFlowers(centroid);
         for(int i=0;i<wanted;i++)
         {
             var rng=STSRandom.For(tree.flowerSeed,i,550);
@@ -224,13 +239,15 @@ internal class STSCardLayout
             {
                 int candidateIndex=capLeaves.Count>0&&i%12==0?capLeaves[rng.Next(capLeaves.Count)]:rng.Next(leaves.Count);
                 var candidate=leaves[candidateIndex];Vector2 opaque=leafMask.OpaquePoint(candidate.uv,tree.leafCards.cutoff,rng);
+                if(candidate.referenceScatter)continue;
                 Vector3 anchor=candidate.Point(opaque.x,opaque.y);
-                Vector3 outward=(anchor-new Vector3(0,tree.height*.62f,0)).normalized;
+                Vector3 outward=(anchor-(STSReferenceGrowth.Active(tree)?STSReferenceCanopy.Center(tree):new Vector3(0,tree.height*.62f,0))).normalized;
                 if(outward.y<-.25f)continue;
                 outward=(outward+Vector3.up*.2f).normalized;
                 Vector3 origin=anchor+outward*(tree.crownWidth+tree.height);int support;Vector3 contact;
                 if(!Surface(origin,-outward,out support,out contact))continue;
-                var leaf=leaves[support];Vector3 normal=leaf.normal;if(Vector3.Dot(normal,outward)<0)normal=-normal;
+                var leaf=leaves[support];if(leaf.referenceScatter)continue;
+                Vector3 normal=leaf.normal;if(Vector3.Dot(normal,outward)<0)normal=-normal;
                 bool top=tree.growthForm==STSGrowthForm.Tree&&(leaf.crownCap||(contact.y>topY-tree.crownWidth*.065f&&normal.y>.45f));
                 // A separate upper budget prevents the cap and random candidates
                 // from repeatedly filling the same roof with overlapping blooms.
@@ -257,6 +274,30 @@ internal class STSCardLayout
             }
         }
     }
+    int BranchFlowers(Vector2 centroid)
+    {
+        int wanted=Mathf.RoundToInt(14*Mathf.Clamp01(tree.flowerAmount)),added=0;
+        var candidates=new List<int>();for(int i=0;i<leaves.Count;i++)if(leaves[i].referenceScatter)candidates.Add(i);
+        var rng=STSRandom.For(tree.flowerSeed,0,514);
+        // Visit distinct small branch clusters, so a high flower setting still
+        // leaves most of the original exposed branch silhouette visible.
+        for(int i=candidates.Count-1;i>0;i--){int j=rng.Next(i+1),k=candidates[i];candidates[i]=candidates[j];candidates[j]=k;}
+        foreach(int index in candidates)
+        {
+            if(added>=wanted)break;
+            var leaf=leaves[index];Vector2 uv=leafMask.OpaquePoint(leaf.uv,tree.leafCards.cutoff,rng);
+            Vector3 contact=leaf.Point(uv.x,uv.y),normal=leaf.normal;
+            float size=tree.crownWidth*.025f*tree.bloomScale*STSRandom.Range(rng,.85f,1.1f);
+            Vector3 target=contact+normal*tree.bloomSurfaceOffset;
+            var card=new STSPlacedCard(target,normal,Quaternion.AngleAxis(STSRandom.Range(rng,-180,180),normal)*leaf.up,new Vector2(size,size),tree.bloomCards.uv);
+            card.center-=card.right*((centroid.x-.5f)*size)+card.up*((centroid.y-.5f)*size);
+            card.referenceScatter=true;card.attachment=target;card.contact=contact;
+            card.rayOrigin=contact+normal*.001f;card.rayDirection=-normal;card.support=index;
+            card.pivot=leaf.pivot;card.wind=leaf.wind;card.color=tree.bloomCards.tint;
+            flowers.Add(card);added++;
+        }
+        return added;
+    }
     void FruitCards()
     {
         if(!tree.enableFruit||!tree.fruitCards.color||leaves.Count==0)return;
@@ -271,12 +312,23 @@ internal class STSCardLayout
     }
     public HashSet<int> LeafSet(int lod)
     {
+        if(STSReferenceGrowth.Active(tree))
+        {
+            var selected=STSReferenceCanopy.LeafSet(tree,leaves,lod);
+            for(int i=0;i<flowers.Count;i++)if(KeepFlowerAt(i,lod))STSReferenceCanopy.KeepWithParents(leaves,selected,flowers[i].support);
+            return selected;
+        }
         var keep=new HashSet<int>();int step=lod==0?1:lod==1?4:2;
         for(int i=0;i<leaves.Count;i++)if(leaves[i].crownCap||lod==0||(lod==1?i%step!=0:i%step==0))keep.Add(i);
         for(int i=0;i<flowers.Count;i++)if(KeepFlower(i,lod))keep.Add(flowers[i].support);
         return keep;
     }
     public static bool KeepFlower(int index,int lod){return lod==0||lod==1?lod==0||index%3!=0:index%3==0;}
+    public bool KeepFlowerAt(int index,int lod)
+    {
+        if(!STSReferenceGrowth.Active(tree))return KeepFlower(index,lod);
+        return lod==0||(lod==1?index%2==0:index%6==0);
+    }
     public static void Append(STSMeshData mesh,STSPlacedCard card)
     {
         int start=mesh.v.Count;

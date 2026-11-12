@@ -16,6 +16,7 @@ internal static class STSPlantFiles
     public static void SavePreset(StylizedTreeAuthoring t)
     {
         if(!STSPresets.IsSupported(t.species)){Debug.LogWarning("该旧物种已移除，已有模型保留。");return;}
+        STSReferenceCapture.DetachTextureInputs(t);
         string path=EditorUtility.SaveFilePanelInProject("保存自定义植物预设","我的植物预设","asset","保存树形参数与 PNG 贴图引用。");
         if(string.IsNullOrEmpty(path))return;
         var asset=AssetDatabase.LoadAssetAtPath<STSPlantPreset>(path);
@@ -25,7 +26,7 @@ internal static class STSPlantFiles
         asset.centers=t.flowerCenterMaterial;asset.fruit=t.fruitMaterial;asset.flowerTexture=t.flowerTexture;asset.flowerPrefab=t.flowerPrefab;
         asset.barkColor=t.barkColor;asset.barkNormal=t.barkNormal;
         asset.cardTextures=new[]{t.leafCards.color,t.leafCards.normal,t.twigCards.color,t.twigCards.normal,t.bloomCards.color,t.bloomCards.normal,t.fruitCards.color,t.fruitCards.normal};
-        asset.pluginVersion="0.5.10";
+        asset.referenceTrunk=t.referenceTrunk;asset.pluginVersion="0.5.14";
         if(isNew)AssetDatabase.CreateAsset(asset,path);else EditorUtility.SetDirty(asset);
         AssetDatabase.SaveAssets();EditorGUIUtility.PingObject(asset);
     }
@@ -35,11 +36,15 @@ internal static class STSPlantFiles
         if(!SupportedRecipe(asset.parameters)){Debug.LogWarning("该预设的物种已移除或数据无效，未改动当前植物。");return;}
         Undo.RecordObject(t,"载入植物预设");string materialId=t.materialSetId;
         // Older JSON has neither field: do not inherit another plant's values.
-        t.trunkTwist=0;t.leafScale=1;
+        t.trunkTwist=0;t.leafScale=1;t.useReferenceTrunk=false;t.referenceTrunk=null;t.referenceBend=0;t.referenceBendDirection=0;t.referenceAddedBranches=0;
+        t.referenceCanopyVersion=0;t.referenceCrownStart=.48f;t.referenceCrownBaseRatio=.16f;
+        t.referenceBranchStretch=1;t.referenceCrownOffset=0;
         JsonUtility.FromJsonOverwrite(asset.parameters,t);t.materialSetId=materialId;
         // Explicit references survive domain reloads; JSON instance IDs are not used for assets.
         t.barkMaterial=asset.bark;t.leafMaterial=asset.leaves;t.flowerMaterial=asset.flowers;t.flowerCenterMaterial=asset.centers;t.fruitMaterial=asset.fruit;
         t.flowerTexture=asset.flowerTexture;t.flowerPrefab=asset.flowerPrefab;t.projectionTarget=null;
+        t.referenceTrunk=asset.referenceTrunk;
+        if(t.useReferenceTrunk&&!t.referenceTrunk){Debug.LogError("该预设缺少主干副本资源，请重新捕获参考主干。");return;}
         STSMaterials.Defaults(t);
         if(asset.cardTextures!=null&&asset.cardTextures.Length==8)
         {
@@ -49,10 +54,17 @@ internal static class STSPlantFiles
         }
         STSPlantBuilder.Build(t);
     }
+    internal static string DestinationPath(StylizedTreeAuthoring t,string requested)
+    {
+        // Save a new file even if reference mode was disabled before exporting.
+        // This also protects existing baked Prefabs and the original source.
+        return AssetDatabase.GenerateUniqueAssetPath(requested);
+    }
     public static void Bake(StylizedTreeAuthoring t,bool editable)
     {
         string path=EditorUtility.SaveFilePanelInProject(editable?"保存可编辑植物 Prefab":"烘焙游戏用植物 Prefab",t.gameObject.name,"prefab","网格保存为独立资源；只导出工坊生成部分。");
         if(string.IsNullOrEmpty(path))return;
+        path=DestinationPath(t,path);
         if(AssetDatabase.LoadMainAssetAtPath(path)&&!AssetDatabase.LoadAssetAtPath<GameObject>(path)){Debug.LogError("目标路径不是 Prefab，请选择其他路径。");return;}
         if(!STSPlantBuilder.Build(t))return;
         GameObject clone=null;string bundlePath=null;bool success=false;

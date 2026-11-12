@@ -74,6 +74,7 @@ internal static class STSPlantBuilder
     }
     static void Validate(StylizedTreeAuthoring t)
     {
+        STSReferenceGrowth.Validate(t);
         foreach(var b in t.branches)
         {
             if(b==null||b.points==null||b.points.Count<2||!STSPath.Finite(b.radius)||b.radius<=0)throw new InvalidOperationException("枝条数据无效。");
@@ -98,8 +99,8 @@ internal static class STSPlantBuilder
         GameObject staged=null;
         try
         {
-            Migrate(t);STSMaterials.Defaults(t);
-            if(!t.lockBranches&&t.growthSignature!=STSSkeleton.Signature(t))STSSkeleton.Generate(t);
+            STSReferenceGrowth.Migrate(t);STSReferenceGrowth.Validate(t);Migrate(t);STSMaterials.Defaults(t);
+            if((!t.lockBranches||STSReferenceGrowth.Active(t))&&t.growthSignature!=STSSkeleton.Signature(t))STSSkeleton.Generate(t);
             Validate(t);STSMaterials.Ensure(t);
             var layout=new STSCardLayout(t,testLeaves,testBlooms);
             if(t.enableFlowers&&t.bloomCards.color&&testLeaves==null&&(!layout.leafMask.verified||!layout.bloomMask.verified))
@@ -115,7 +116,8 @@ internal static class STSPlantBuilder
             for(int lod=0;lod<levels;lod++)
             {
                 var bark=new STSMeshData();
-                foreach(var b in t.branches)
+                if(STSReferenceGrowth.Active(t))STSReferenceGrowth.AppendBark(t,bark,lod);
+                else foreach(var b in t.branches)
                 {
                     int depth=layout.Depth(b);if(b.isFrond||depth>2||(lod==2&&depth>1))continue;
                     var pts=layout.paths[b.id];var sample=new List<Vector3>();int segments=b.isTrunk?Mathf.Max(4,7-lod):Mathf.Max(2,4-depth-lod);
@@ -126,7 +128,7 @@ internal static class STSPlantBuilder
                 }
                 var leaves=new STSMeshData();var keep=layout.LeafSet(lod);foreach(int index in keep)STSCardLayout.Append(leaves,layout.leaves[index]);
                 var twigs=new STSMeshData();if(t.twigCards.color)for(int k=0;k<layout.twigs.Count;k++)if(lod==0||k%(lod+1)==0)STSCardLayout.Append(twigs,layout.twigs[k]);
-                var blooms=new STSMeshData();if(t.bloomCards.color)for(int k=0;k<layout.flowers.Count;k++)if(STSCardLayout.KeepFlower(k,lod))STSCardLayout.Append(blooms,layout.flowers[k]);
+                var blooms=new STSMeshData();if(t.bloomCards.color)for(int k=0;k<layout.flowers.Count;k++)if(layout.KeepFlowerAt(k,lod))STSCardLayout.Append(blooms,layout.flowers[k]);
                 var fruit=new STSMeshData();for(int k=0;k<layout.fruit.Count;k++)STSCardLayout.Append(fruit,layout.fruit[k]);
                 var level=new GameObject("LOD"+lod);level.transform.SetParent(staged.transform,false);
                 AddMesh(level.transform,"枝干 / Bark",bark,t.barkMaterial,marker,lod);

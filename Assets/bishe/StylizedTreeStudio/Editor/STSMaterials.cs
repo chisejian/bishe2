@@ -50,8 +50,9 @@ internal static class STSMaterials
   Defaults(t);
   if(!string.IsNullOrEmpty(t.materialSetId))foreach(var other in Resources.FindObjectsOfTypeAll<StylizedTreeAuthoring>())
    if(other&&other!=t&&other.materialSetId==t.materialSetId){t.materialSetId=Guid.NewGuid().ToString("N");break;}
+  STSReferenceCapture.DetachTextureInputs(t);
   ConfigureLeafInput(t.leafCards);
-  t.barkMaterial=Material(t,"Bark",t.barkColor,t.barkNormal,.001f,false);
+  t.barkMaterial=STSReferenceGrowth.Active(t)?t.referenceTrunk.barkMaterial:Material(t,"Bark",t.barkColor,t.barkNormal,.001f,false);
   t.leafMaterial=Material(t,"Leaves",t.leafCards.color,t.leafCards.normal,t.leafCards.cutoff,true);
   t.flowerMaterial=Material(t,"Flowers",t.bloomCards.color,t.bloomCards.normal,t.bloomCards.cutoff,true);
   t.fruitMaterial=Material(t,"Fruit",t.fruitCards.color,t.fruitCards.normal,t.fruitCards.cutoff,true);
@@ -74,6 +75,7 @@ internal static class STSMaterials
  }
  public static void ConfigureTextures(StylizedTreeAuthoring t)
  {
+  STSReferenceCapture.DetachTextureInputs(t);
   foreach(var map in new[]{t.leafCards,t.twigCards,t.bloomCards,t.fruitCards})
   {
    if(map.color)
@@ -83,8 +85,11 @@ internal static class STSMaterials
    }
    Normal(map.normal,true);
   }
-  if(t.barkColor){var importer=AssetImporter.GetAtPath(AssetDatabase.GetAssetPath(t.barkColor)) as TextureImporter;if(importer){importer.sRGBTexture=true;importer.wrapMode=TextureWrapMode.Repeat;importer.SaveAndReimport();}}
-  Normal(t.barkNormal,false);
+  if(!STSReferenceGrowth.Active(t))
+  {
+   if(t.barkColor){var importer=AssetImporter.GetAtPath(AssetDatabase.GetAssetPath(t.barkColor)) as TextureImporter;if(importer){importer.sRGBTexture=true;importer.wrapMode=TextureWrapMode.Repeat;importer.SaveAndReimport();}}
+   Normal(t.barkNormal,false);
+  }
  }
  static void Normal(Texture2D normal,bool clamp)
  {
