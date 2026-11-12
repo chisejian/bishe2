@@ -26,7 +26,7 @@ internal static class STSPlantFiles
         asset.centers=t.flowerCenterMaterial;asset.fruit=t.fruitMaterial;asset.flowerTexture=t.flowerTexture;asset.flowerPrefab=t.flowerPrefab;
         asset.barkColor=t.barkColor;asset.barkNormal=t.barkNormal;
         asset.cardTextures=new[]{t.leafCards.color,t.leafCards.normal,t.twigCards.color,t.twigCards.normal,t.bloomCards.color,t.bloomCards.normal,t.fruitCards.color,t.fruitCards.normal};
-        asset.referenceTrunk=t.referenceTrunk;asset.pluginVersion="0.5.14";
+        asset.referenceTrunk=t.referenceTrunk;asset.pluginVersion="0.5.15";
         if(isNew)AssetDatabase.CreateAsset(asset,path);else EditorUtility.SetDirty(asset);
         AssetDatabase.SaveAssets();EditorGUIUtility.PingObject(asset);
     }
@@ -86,7 +86,9 @@ internal static class STSPlantFiles
             var copies=new Dictionary<Mesh,Mesh>();
             foreach(var mf in clone.GetComponentsInChildren<MeshFilter>(true))
             {
-                Mesh source=mf.sharedMesh;if(!source||EditorUtility.IsPersistent(source))continue;
+                // Snapshot persistent scene meshes too, so editing the source
+                // plant cannot alter an already exported Prefab.
+                Mesh source=mf.sharedMesh;if(!source)continue;
                 Mesh copy;if(!copies.TryGetValue(source,out copy)){copy=UnityEngine.Object.Instantiate(source);copy.name=source.name;AssetDatabase.AddObjectToAsset(copy,bundle);copies.Add(source,copy);}
                 mf.sharedMesh=copy;
             }
@@ -117,6 +119,7 @@ internal static class STSPlantFiles
             foreach(var marker in clone.GetComponentsInChildren<STSGeneratedOutput>(true))
             {
                 if(!editable){UnityEngine.Object.DestroyImmediate(marker);continue;}
+                marker.meshAsset=null;
                 marker.ownedMeshes.Clear();foreach(var copy in copies.Values)marker.ownedMeshes.Add(copy);
             }
             AssetDatabase.SaveAssets();GameObject prefab=PrefabUtility.SaveAsPrefabAsset(clone,path);

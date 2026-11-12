@@ -9,5 +9,5 @@ public class STSPlantPreset : ScriptableObject
     public Texture2D barkColor,barkNormal;
     public Texture2D[] cardTextures;
     public STSReferenceTrunk referenceTrunk;
-    public string pluginVersion = "0.5.14";
+    public string pluginVersion = "0.5.15";
 }

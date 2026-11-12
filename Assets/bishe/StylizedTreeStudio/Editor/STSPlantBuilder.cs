@@ -141,6 +141,8 @@ internal static class STSPlantBuilder
             if(t.generateLOD){var group=staged.AddComponent<LODGroup>();group.SetLODs(lods.ToArray());group.RecalculateBounds();}
             if(t.addTrunkCollider){var c=staged.AddComponent<CapsuleCollider>();c.center=Vector3.up*t.height*.5f;c.height=t.height;c.radius=t.trunkRadius;c.direction=1;}
             foreach(Transform node in staged.GetComponentsInChildren<Transform>(true))marker.ownedObjects.Add(node.gameObject);marker.complete=true;
+            // Complete asset storage before replacing the visible old output.
+            STSSceneMeshStorage.Store(t,marker,old?old.GetComponent<STSGeneratedOutput>():null,false);
             if(old)Release(old.gameObject);staged.name=RootName;staged.hideFlags=HideFlags.None;staged=null;
             EditorUtility.SetDirty(t);if(t.gameObject.scene.IsValid())EditorSceneManager.MarkSceneDirty(t.gameObject.scene);
             BuiltState[t.GetInstanceID()]=JsonUtility.ToJson(t);SceneView.RepaintAll();return true;

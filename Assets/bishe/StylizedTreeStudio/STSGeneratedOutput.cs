@@ -8,6 +8,7 @@ public class STSGeneratedOutput : MonoBehaviour
 {
     public StylizedTreeAuthoring owner;
     public List<Mesh> ownedMeshes = new List<Mesh>();
+    [HideInInspector] public STSPlantMeshBundle meshAsset;
     public List<GameObject> ownedObjects = new List<GameObject>();
     public bool complete;
     public int highDetailTriangles;

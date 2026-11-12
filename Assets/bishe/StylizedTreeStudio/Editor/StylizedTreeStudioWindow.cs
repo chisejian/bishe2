@@ -17,8 +17,8 @@ public class StylizedTreeStudioWindow : EditorWindow
     double rebuildAt=-1;
     string status;
     [MenuItem("Tools/风格化植物工坊/Stylized Tree Studio")]
-    public static void Open(){GetWindow<StylizedTreeStudioWindow>("面片植物工坊 V0.5.14");}
-    public static void OpenFor(StylizedTreeAuthoring t){var w=GetWindow<StylizedTreeStudioWindow>("面片植物工坊 V0.5.14");w.tree=t;w.chosen=STSPresets.IsSupported(t.species)?t.species:STSPlantSpecies.CrepeMyrtle;}
+    public static void Open(){GetWindow<StylizedTreeStudioWindow>("面片植物工坊 V0.5.15");}
+    public static void OpenFor(StylizedTreeAuthoring t){var w=GetWindow<StylizedTreeStudioWindow>("面片植物工坊 V0.5.15");w.tree=t;w.chosen=STSPresets.IsSupported(t.species)?t.species:STSPlantSpecies.CrepeMyrtle;}
     void OnEnable(){EditorApplication.update+=Tick;if(!referencePrefab)referencePrefab=AssetDatabase.LoadAssetAtPath<GameObject>(AssetDatabase.GUIDToAssetPath(STSReferenceCapture.OakPrefabGuid));}
     void OnDisable(){EditorApplication.update-=Tick;}
     void Tick(){if(rebuildAt<0||EditorApplication.timeSinceStartup<rebuildAt)return;rebuildAt=-1;if(tree)Rebuild();}
@@ -126,7 +126,7 @@ public class StylizedTreeStudioWindow : EditorWindow
     void OnGUI()
     {
         scroll=EditorGUILayout.BeginScrollView(scroll);
-        EditorGUILayout.LabelField("面片植物工坊 V0.5.14",EditorStyles.boldLabel);
+        EditorGUILayout.LabelField("面片植物工坊 V0.5.15",EditorStyles.boldLabel);
         EditorGUILayout.HelpBox("叶簇拖入一张 RGBA PNG，即自动创建团簇受光材质。花簇继续贴在树冠外层。",MessageType.Info);
         tree=(StylizedTreeAuthoring)EditorGUILayout.ObjectField("当前植物 / Plant",tree,typeof(StylizedTreeAuthoring),true);
         if(!STSPresets.IsSupported(chosen))chosen=STSPlantSpecies.CrepeMyrtle;
@@ -231,6 +231,9 @@ public class StylizedTreeStudioWindow : EditorWindow
         Transform root=tree.transform.Find(STSPlantBuilder.RootName);var output=root?root.GetComponent<STSGeneratedOutput>():null;
         if(output)
         {
+            if(GUILayout.Button("转存当前植物网格（缩小场景文件）",GUILayout.Height(28)))
+                status=STSSceneMeshStorage.TransferCurrent(tree);
+            EditorGUILayout.LabelField(STSSceneMeshStorage.InlineCount(output)>0?"网格仍保存在场景中，可点击上方转存。":"网格已保存为独立资源。保存场景后生效。");
             EditorGUILayout.LabelField("LOD0：叶簇 "+output.leafCardCount+"；花簇 "+output.flowerCardCount+"；三角形 "+output.highDetailTriangles.ToString("N0"));
             if(tree.canopyFullness>0&&output.leafCardCount==0)EditorGUILayout.HelpBox("叶片未生成，请检查叶簇 PNG、UV 区域和透明裁切值。",MessageType.Warning);
             EditorGUILayout.LabelField("模型高度 "+(output.localModelHeight*Mathf.Abs(tree.transform.lossyScale.y)).ToString("F1")+" 米");
@@ -265,7 +268,7 @@ internal class STSAuthoringInspector : Editor
 {
     public override void OnInspectorGUI()
     {
-        var t=(StylizedTreeAuthoring)target;EditorGUILayout.LabelField("面片植物工坊 V0.5.14",EditorStyles.boldLabel);
+        var t=(StylizedTreeAuthoring)target;EditorGUILayout.LabelField("面片植物工坊 V0.5.15",EditorStyles.boldLabel);
         EditorGUILayout.HelpBox("在工坊窗口拖入叶簇和花簇 PNG，再调整密度。",MessageType.Info);
         if(GUILayout.Button("打开植物工坊"))StylizedTreeStudioWindow.OpenFor(t);
         if(!STSPresets.IsSupported(t.species)){EditorGUILayout.HelpBox("该旧物种已移除，已有模型保留。",MessageType.Info);return;}
